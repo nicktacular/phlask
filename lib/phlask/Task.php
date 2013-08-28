@@ -251,7 +251,12 @@ class Task
      */
     public function close()
     {
-
+        //@todo proc_close() blocks on the process AND requires us to carefully
+        //manage the pipes that were opened PRIOR to closing. But termination
+        //is equally effective and doesn't block. This is just a reminder to deal
+        //with this method in some way later. Perhaps we just redirect to
+        //$this->terminate(self::SIG_HALT) or something appropriate.
+        throw new \RuntimeException("We don't do this.");
     }
 
     /**
