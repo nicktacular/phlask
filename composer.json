@@ -1,0 +1,16 @@
+{
+    "require": {
+        "monolog/monolog": "1.6.*",
+        "aws/aws-sdk-php": "2.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*",
+        "squizlabs/php_codesniffer": "1.*"
+    },
+    
+    "autoload": {
+        "psr-0": {
+            "phlask": "lib/"
+        }
+    }
+}
