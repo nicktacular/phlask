@@ -5,7 +5,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
-        "squizlabs/php_codesniffer": "1.*"
+        "squizlabs/php_codesniffer": "1.*",
+        "mockery/mockery": ">=0.8.0"
     },
     
     "autoload": {
