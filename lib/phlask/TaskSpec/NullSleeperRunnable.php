@@ -13,6 +13,19 @@ class NullSleeperRunnable implements TaskSpecInterface
     protected $sleep;
 
     /**
+     * Whether this is a daemon process..
+     * @var bool
+     */
+    protected $daemon;
+
+    /**
+     * Timeout in seconds. Zero meaning indefinite.
+     *
+     * @var int
+     */
+    protected $timeout;
+
+    /**
      * All new specs should created by means of a factory.
      *
      * @param array $config A list of configs (optional).
@@ -26,12 +39,22 @@ class NullSleeperRunnable implements TaskSpecInterface
             $config['sleep'] = 10000;//useconds
         }
 
-        return new static($config['sleep']);
+        if (!isset($config['daemon'])) {
+            $config['daemon'] = true;
+        }
+
+        if (!isset($config['timeout'])) {
+            $config['timeout'] = 0;
+        }
+
+        return new static($config['sleep'], $config['daemon'], $config['timeout']);
     }
 
-    protected function __construct($sleep)
+    protected function __construct($sleep, $daemon, $timeout)
     {
-        $this->sleep = $sleep;
+        $this->sleep    = $sleep;
+        $this->daemon   = $daemon;
+        $this->timeout  = $timeout;
     }
 
     /**
@@ -85,7 +108,7 @@ class NullSleeperRunnable implements TaskSpecInterface
      */
     public function isDaemon()
     {
-        return true;
+        return $this->daemon;
     }
 
     /**
@@ -100,7 +123,7 @@ class NullSleeperRunnable implements TaskSpecInterface
      */
     public function getTimeout()
     {
-        return 0;
+        return $this->timeout;
     }
 
     /**
