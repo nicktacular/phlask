@@ -140,4 +140,9 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $this->assertSame(Task::SIG_ABRT, $task->getTermSignal(), 'The signal should have been Task::SIG_ABRT');
         $this->assertNull($task->getExitCode());
     }
+
+    public function tearDown()
+    {
+        Mockery::close();
+    }
 }

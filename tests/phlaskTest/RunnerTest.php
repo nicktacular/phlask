@@ -5,6 +5,7 @@ use Mockery as m;
 use phlask\TaskQueue\MemoryQueue;
 use phlask\TaskSpec\ShellRunnable;
 use phlask\TaskSpec\NullSleeperRunnable;
+use phlask\Task;
 
 class RunnerTest extends PHPUnit_Framework_TestCase
 {
@@ -153,11 +154,80 @@ class RunnerTest extends PHPUnit_Framework_TestCase
 
         $runner->run();
 
-        //inspect the logs to make sure that we only ever ran 1 process at a time
+        //inspect the logs to make sure that we only ever ran $max processes at a time
         foreach ($logger->log as $entry) {
             if (preg_match('/^Currently running tasks: (?<count>[0-9]+)$/', $entry, $matches)) {
                 $this->assertLessThanOrEqual($max, $matches['count'], 'Wrong number of processes were running!');
             }
+        }
+    }
+
+    public function testExitCodes()
+    {
+        $tasks = $this->createFileTasks($numOfTasks = 5);
+        $runner = Runner::factory(array(
+            'tasks' => $tasks[0],
+            'wait' => 20,
+            'daemon' => false,
+            'max_processes' => 10,
+            'logger' => $logger = new MemLogger()
+        ));
+
+        $runner->run();
+
+        foreach ($tasks[1] as $task)
+        {
+            //see what's in the file
+            if (file_get_contents($task['file']) != $task['i']) {
+                $this->fail("The process run failed. Expected \"{$task['i']}\" in the file {$task['file']}.");
+            } else {
+                unlink($task['file']);
+            }
+        }
+
+        //ensure that the exit codes were as expected
+        $found = array();
+        foreach ($logger->log as $entry) {
+            if (preg_match('/^Task task_(?<task_id>[0-9]+) \([0-9]+\)[a-zA-Z ]+(?<code>[0-9]+)$/', $entry, $matches)) {
+                $this->assertEquals($matches['task_id'], $matches['code']);
+                $found[] = $matches['task_id'];
+            }
+        }
+
+        if ($numOfTasks !== count($found)) {
+            $this->fail('Did not find enough exit codes for how many procs were run');
+        }
+    }
+
+    public function testExpiredTasksRun()
+    {
+        $tasks = new MemoryQueue();
+        $tasks->pushTask(NullSleeperRunnable::factory(array(
+            'sleep' => 10000000,//10 s
+            'daemon' => false,
+            'timeout' => 1
+        )));
+
+        $runner = Runner::factory(array(
+            'tasks' => $tasks,
+            'wait' => 20,
+            'daemon' => false,
+            'max_processes' => 1,
+            'logger' => $logger = new MemLogger()
+        ));
+
+        $runner->run();
+
+        //ensure that the task was signalled correctly
+        foreach ($logger->log as $entry) {
+            if (preg_match('/^Task .+ signaled with (?<sig>[0-9]+)/', $entry, $matches)) {
+                $this->assertEquals(Task::SIG_ALRM, $matches['sig']);
+                $found = true;
+            }
+        }
+
+        if (!isset($found)) {
+            $this->fail('Did not find a termination signal message');
         }
     }
 }

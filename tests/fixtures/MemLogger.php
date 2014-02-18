@@ -4,6 +4,7 @@ use \Psr\Log\LogLevel;
 
 class MemLogger implements \Psr\Log\LoggerInterface
 {
+    public $startTime;
     //the array of items that were logged
     public $log = array();
 
@@ -49,10 +50,23 @@ class MemLogger implements \Psr\Log\LoggerInterface
 
     public function log($level, $message, array $context = array())
     {
+        if (!$this->startTime) {
+            $this->startTime = microtime(true);
+        }
+
         //If the current message === last message, then ignore it.
         //This is to make it easier to look through in testing.
-        if ($message == end($this->log)) return;
+        if ($message == end($this->log)) {
+            return;
+        }
 
-        $this->log[] = $message;
+        $i = 0;
+
+        do {
+            $key = (microtime(true) - $this->startTime) . $i;
+            $i++;
+        } while (isset($this->log[$key]));
+
+        $this->log[$key] = $message;
     }
 }
