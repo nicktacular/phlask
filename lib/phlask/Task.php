@@ -27,10 +27,11 @@ namespace phlask;
  */
 class Task
 {
-    const STATUS_RUNNING  = 0;
-    const STATUS_SIGNALED = 1;
-    const STATUS_STOPPED  = 2;
-    const STATUS_COMPLETE = 3;
+    const STATUS_RUNNING                = 0;
+    const STATUS_SIGNALED               = 1;
+    const STATUS_STOPPED                = 2;
+    const STATUS_COMPLETE               = 3;
+    const STATUS_PENDING_TERMINATION    = 4;
 
     const SIG_HUP  = 1;
     const SIG_INT  = 2;
@@ -98,14 +99,14 @@ class Task
     protected $exitCode;
 
     /**
-     * The signal if signalled. One of self::SIG_* constants.
+     * The signal if signalled. One of static::SIG_* constants.
      *
      * @var int
      */
     protected $stopSignal;
 
     /**
-     * The signal if terminated by signal. One of self::SIG_* constants.
+     * The signal if terminated by signal. One of static::SIG_* constants.
      *
      * @var int
      */
@@ -180,8 +181,9 @@ class Task
         }
 
         //initialize some variables in this class
-        $this->statusCheck();
         $this->startTime = microtime(true);
+        $this->status = static::STATUS_RUNNING;
+        $this->statusCheck();
 
         return $this;
     }
@@ -196,14 +198,23 @@ class Task
         $s = proc_get_status($this->process);
 
         //default status is that we're running
-        $this->status = self::STATUS_RUNNING;
+        if (!$this->status === null) {
+            $this->status = static::STATUS_RUNNING;
+        }
+
+        //calculate runtime
+        if ($this->status != static::STATUS_RUNNING) {
+            $this->endTime = microtime(true);
+        }
 
         //extract data from array
         $this->pid = isset($s['pid']) ? $s['pid'] : false;
 
         //extract status
         if (isset($s['running']) && $s['running'] === false) {
-            $this->status = self::STATUS_COMPLETE;
+            if ($this->status != static::STATUS_PENDING_TERMINATION) {
+                $this->status = static::STATUS_COMPLETE;
+            }
             //Since multiple calls to this method will cause exit code to change,
             //we preserve the value of $this->exitCode if the value is -1 which
             //means that we've already extracted a meaningful exit code.
@@ -213,15 +224,11 @@ class Task
         }
 
         if (isset($s['signaled']) && $s['signaled'] === true) {
-            $this->status = self::STATUS_SIGNALED;
+            $this->status = static::STATUS_SIGNALED;
             $this->termSignal = isset($s['termsig']) ? $s['termsig'] : null;
         } elseif (isset($s['stopped']) && $s['stopped'] === true) {
-            $this->status = self::STATUS_STOPPED;
+            $this->status = static::STATUS_STOPPED;
             $this->stopSignal = isset($s['stopsig']) ? $s['stopsig'] : null;
-        }
-
-        if ($this->status != self::STATUS_RUNNING) {
-            $this->endTime = microtime(true);
         }
     }
 
@@ -235,8 +242,11 @@ class Task
     public function terminate($signal = self::SIG_TERM)
     {
         $this->statusCheck();
-        if ($this->status == self::STATUS_RUNNING) {
+        if ($this->status == static::STATUS_RUNNING) {
             proc_terminate($this->process, $signal);
+
+            //change teh status to pending termination
+            $this->status = static::STATUS_PENDING_TERMINATION;
 
             return true;
         }
@@ -255,7 +265,7 @@ class Task
         //manage the pipes that were opened PRIOR to closing. But termination
         //is equally effective and doesn't block. This is just a reminder to deal
         //with this method in some way later. Perhaps we just redirect to
-        //$this->terminate(self::SIG_HALT) or something appropriate.
+        //$this->terminate(static::SIG_HALT) or something appropriate.
         throw new \RuntimeException("We don't do this.");
     }
 

@@ -207,8 +207,9 @@ class Runner
             foreach ($this->runningTasks as $task) {
                 /** @var Task $task */
                 $task->statusCheck();
+                $status = $task->getStatus();
 
-                if ($task->getStatus() == Task::STATUS_RUNNING) {
+                if ($status == Task::STATUS_RUNNING) {
                     //if it's not a daemon process, terminate if overtime
                     if (!$task->isDaemon() && $task->getTaskSpec()->getTimeout()) {
                         $max = $task->getTaskSpec()->getTimeout();
@@ -218,12 +219,12 @@ class Runner
                                 'Terminating task ' . $task->getTaskSpec()->getName()
                                 . ' for exceeding max runtime limit of ' . $max
                             );
-                            $task->terminate();
+
+                            $task->terminate(Task::SIG_ALRM);
                         }
                     }
                 } else {
                     //terminated or complete
-                    $status = $task->getStatus();
                     $code   = $task->getExitCode();
                     $pid    = $task->getPid();
                     $name   = $task->getTaskSpec()->getName();
@@ -240,13 +241,21 @@ class Runner
                         case Task::STATUS_COMPLETE:
                             $msg = sprintf('Task %s (%d) complete with exit code %d', $name, $pid, $code);
                             break;
+                        case Task::STATUS_PENDING_TERMINATION:
+                            $msg = sprintf('Task %s (%d) pending termination.', $name, $pid);
+                            break;
                         default:
                             $msg = sprintf('Task %s (%d) status unknown with exit code %d', $name, $pid, $code);
                             break;
                     }
 
+                    //log the status
                     $this->logger->info($msg);
-                    $this->runningTasks->detach($task);
+
+                    //only remove if not pending termination
+                    if ($status != Task::STATUS_PENDING_TERMINATION) {
+                        $this->runningTasks->detach($task);
+                    }
                 }
             }
 
