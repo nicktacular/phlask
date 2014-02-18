@@ -13,6 +13,7 @@ $finder = Symfony\CS\Finder\DefaultFinder::create()
     ->exclude('Symfony/CS/Tests/Fixer')
     ->notName('ElseifFixer.php')
     ->exclude('data')
+    ->exclude('tests')
     ->in(__DIR__)
 ;
 
