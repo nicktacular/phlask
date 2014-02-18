@@ -2,7 +2,6 @@
 
 namespace phlask\TaskSpec;
 
-use phlask\Exception;
 use phlask\TaskSpecInterface;
 
 class NullSleeperRunnable implements TaskSpecInterface

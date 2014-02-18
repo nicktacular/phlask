@@ -139,7 +139,7 @@ class ShellRunnable implements TaskSpecInterface
      * time. For example, setting 1000 may result in the process running
      * 1023 milliseconds.
      *
-     * @return int The timeout in millisecods. Zero indicates no timeout. Note
+     * @return int The timeout in milliseconds. Zero indicates no timeout. Note
      *             that this value is ignored if isDaemon() returns true.
      */
     public function getTimeout()
