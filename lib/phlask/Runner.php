@@ -137,19 +137,19 @@ class Runner
     /**
      * Creates a runnable instance.
      *
-     * @param TaskQueueInterface $tasks The queue that will be used to extract
-     *                                  and run tasks for this instance.
-     * @param bool $daemonMode If set to true, the instance will continue
-     *                                  to wait even after there are no tasks in the
-     *                                  queue, thereby allowing a perpetual process
-     *                                  to run and act on items in the queue when
-     *                                  they appear (eventually).
-     * @param int             $wait   The number of µs to wait to sample a process.
-     * @param bool            $verbose Whether to run verbosely.
-     * @param int             $maxProcesses Maximum number of concurrently running tasks.
-     * @param LoggerInterface $logger A logger to output information about what's
-     *                                  going on in this world.
-     * @param SplObjectStorage $taskStore A means for storing running tasks.
+     * @param TaskQueueInterface $tasks        The queue that will be used to extract
+     *                                         and run tasks for this instance.
+     * @param bool               $daemonMode   If set to true, the instance will continue
+     *                                         to wait even after there are no tasks in the
+     *                                         queue, thereby allowing a perpetual process
+     *                                         to run and act on items in the queue when
+     *                                         they appear (eventually).
+     * @param int                $wait         The number of µs to wait to sample a process.
+     * @param bool               $verbose      Whether to run verbosely.
+     * @param int                $maxProcesses Maximum number of concurrently running tasks.
+     * @param LoggerInterface    $logger       A logger to output information about what's
+     *                                         going on in this world.
+     * @param SplObjectStorage   $taskStore    A means for storing running tasks.
      */
     public function __construct(
         TaskQueueInterface $tasks,
@@ -169,11 +169,14 @@ class Runner
         $this->runningTasks = $taskStore;
     }
 
-    //@todo catch the exceptions necessary in this method
+    /**
+     * Enters a running state and either completes after queue is empty or sleep-waits for additional
+     * items in the queue when in daemon mode.
+     */
     public function run()
     {
         while (1) {
-            while ($this->tasks->hasTasks() && $this->runningTasks->count() <= $this->maxProcesses) {
+            while ($this->tasks->hasTasks() && $this->runningTasks->count() < $this->maxProcesses) {
                 $this->logger->info("Have " . $this->tasks->count() . ' tasks to start');
 
                 //pop a task, init and run
@@ -183,7 +186,7 @@ class Runner
 
                 try {
                     $task->run();
-                    $this->logger->info($task->getTaskSpec()->getName() . '(' . $task->getPid() . ')');
+                    $this->logger->info('Started ' . $task->getTaskSpec()->getName() . '(' . $task->getPid() . ')');
                 } catch (Exception\ExecutionException $e) {
                     $this->logger->warning($e->getMessage());
                     $this->runningTasks->detach($task);
@@ -202,6 +205,7 @@ class Runner
 
             //check the status of the running tasks
             foreach ($this->runningTasks as $task) {
+                /** @var Task $task */
                 $task->statusCheck();
 
                 if ($task->getStatus() == Task::STATUS_RUNNING) {
@@ -217,31 +221,37 @@ class Runner
                             $task->terminate();
                         }
                     }
-                } elseif ($task->getStatus() == Task::STATUS_SIGNALED) {
-                    $this->logger->info(
-                        'Task ' . $task->getTaskSpec()->getName() . '(' . $task->getPid() . ') terminated with signal '
-                        . $task->getTermSignal() . '. '
-                        . ($task->getExitCode() !== null ? ' Exit code: ' . $task->getExitCode() : '')
-                    );
-                    $this->runningTasks->detach($task);
-                } elseif ($task->getStatus() == Task::STATUS_STOPPED) {
-                    $this->logger->info(
-                        'Task ' . $task->getTaskSpec()->getName() . '(' . $task->getPid() . ') stopped with signal '
-                        . $task->getStopSignal() . '. '
-                        . ($task->getExitCode() !== null ? ' Exit code: ' . $task->getExitCode() : '')
-                    );
-                    $this->runningTasks->detach($task);
-                } elseif ($task->getStatus() == Task::STATUS_COMPLETE) {
-                    $this->logger->info(
-                        'Task ' . $task->getTaskSpec()->getName() . '(' . $task->getPid() . ') is complete.'
-                        . ($task->getExitCode() !== null ? ' Exit code: ' . $task->getExitCode() : '')
-                    );
+                } else {
+                    //terminated or complete
+                    $status = $task->getStatus();
+                    $code   = $task->getExitCode();
+                    $pid    = $task->getPid();
+                    $name   = $task->getTaskSpec()->getName();
+                    $ssig   = $task->getStopSignal();
+                    $tsig   = $task->getTermSignal();
+
+                    switch ($status) {
+                        case Task::STATUS_SIGNALED:
+                            $msg = sprintf('Task %s (%d) signaled with %d, (exit: %d)', $name, $pid, $tsig, $code);
+                            break;
+                        case Task::STATUS_STOPPED:
+                            $msg = sprintf('Task %s (%d) stopped with %d, (exit: %d)', $name, $pid, $ssig, $code);
+                            break;
+                        case Task::STATUS_COMPLETE:
+                            $msg = sprintf('Task %s (%d) complete with exit code %d', $name, $pid, $code);
+                            break;
+                        default:
+                            $msg = sprintf('Task %s (%d) status unknown with exit code %d', $name, $pid, $code);
+                            break;
+                    }
+
+                    $this->logger->info($msg);
                     $this->runningTasks->detach($task);
                 }
             }
 
-            //only continue if in daemon mode
-            if (!$this->runningTasks->count() && !$this->daemonMode) {
+            //only continue if in daemon mode, or there are more tasks to run
+            if (!$this->daemonMode && !$this->tasks->count() && !$this->runningTasks->count()) {
                 break;
             }
         }

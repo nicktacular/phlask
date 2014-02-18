@@ -48,8 +48,8 @@ class TaskTest extends PHPUnit_Framework_TestCase
         ]));
 
         $task->run();
-        $validPid = $task->getPid() > 1024 && $task->getPid() < 65535;
-        $this->assertTrue($validPid, "The PID was expected to be > 1024. Actually: " . var_export($task->getPid(), true));
+        $validPid = $task->getPid() > 0;
+        $this->assertTrue($validPid, "The PID was expected to be > 0. Actually: " . var_export($task->getPid(), true));
         $this->assertSame(Task::STATUS_RUNNING, $task->getStatus());
 
         //wait until it's done
