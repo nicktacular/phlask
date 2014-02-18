@@ -7,16 +7,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "2.4.12",
+            "version": "2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "61eaf675b7de9ce8b2c6b44317b01e6818ea16c3"
+                "reference": "f720d799ea385f86ef33966908a1217dda5e49ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/61eaf675b7de9ce8b2c6b44317b01e6818ea16c3",
-                "reference": "61eaf675b7de9ce8b2c6b44317b01e6818ea16c3",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f720d799ea385f86ef33966908a1217dda5e49ce",
+                "reference": "f720d799ea385f86ef33966908a1217dda5e49ce",
                 "shasum": ""
             },
             "require": {
@@ -41,7 +41,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4.x-dev"
+                    "dev-master": "2.5.x-dev"
                 }
             },
             "autoload": {
@@ -71,20 +71,20 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2013-12-12 19:35:51"
+            "time": "2014-01-30 00:45:15"
         },
         {
             "name": "guzzle/guzzle",
-            "version": "v3.8.0",
+            "version": "v3.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "b4a3ce8c05e777fa18b802956d5d0e38ad338a69"
+                "reference": "4de0618a01b34aa1c8c33a3f13f396dcd3882eba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/b4a3ce8c05e777fa18b802956d5d0e38ad338a69",
-                "reference": "b4a3ce8c05e777fa18b802956d5d0e38ad338a69",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/4de0618a01b34aa1c8c33a3f13f396dcd3882eba",
+                "reference": "4de0618a01b34aa1c8c33a3f13f396dcd3882eba",
                 "shasum": ""
             },
             "require": {
@@ -122,8 +122,8 @@
                 "phpunit/phpunit": "3.7.*",
                 "psr/log": "1.0.*",
                 "symfony/class-loader": "*",
-                "zendframework/zend-cache": "2.0.*",
-                "zendframework/zend-log": "2.0.*"
+                "zendframework/zend-cache": "<2.3",
+                "zendframework/zend-log": "<2.3"
             },
             "type": "library",
             "extra": {
@@ -133,8 +133,8 @@
             },
             "autoload": {
                 "psr-0": {
-                    "Guzzle\\Tests": "tests/",
-                    "Guzzle": "src/"
+                    "Guzzle": "src/",
+                    "Guzzle\\Tests": "tests/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -163,7 +163,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2013-12-05 23:39:20"
+            "time": "2014-01-28 22:29:15"
         },
         {
             "name": "monolog/monolog",
@@ -267,17 +267,17 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.4.0",
+            "version": "v2.4.2",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "acd1707236f6eb96fbb8d58f63d289b72ebc2f6e"
+                "reference": "4708b8cd41984a5ba29fe7dd40716f7f761ac501"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/acd1707236f6eb96fbb8d58f63d289b72ebc2f6e",
-                "reference": "acd1707236f6eb96fbb8d58f63d289b72ebc2f6e",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/4708b8cd41984a5ba29fe7dd40716f7f761ac501",
+                "reference": "4708b8cd41984a5ba29fe7dd40716f7f761ac501",
                 "shasum": ""
             },
             "require": {
@@ -308,7 +308,9 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
                 },
                 {
                     "name": "Symfony Community",
@@ -317,31 +319,38 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "http://symfony.com",
-            "time": "2013-12-03 14:52:22"
+            "time": "2014-02-11 13:52:09"
         }
     ],
     "packages-dev": [
         {
             "name": "mockery/mockery",
-            "version": "0.8.0",
+            "version": "0.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/padraic/mockery.git",
-                "reference": "35f0e18022f5538df9df8920a3d96c1761d63220"
+                "reference": "0fd49fd3f6c984409802004b1dd7b55d0f35ce4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/35f0e18022f5538df9df8920a3d96c1761d63220",
-                "reference": "35f0e18022f5538df9df8920a3d96c1761d63220",
+                "url": "https://api.github.com/repos/padraic/mockery/zipball/0fd49fd3f6c984409802004b1dd7b55d0f35ce4a",
+                "reference": "0fd49fd3f6c984409802004b1dd7b55d0f35ce4a",
                 "shasum": ""
             },
             "require": {
+                "lib-pcre": ">=7.0",
                 "php": ">=5.3.2"
             },
             "require-dev": {
-                "hamcrest/hamcrest": "1.1.0"
+                "hamcrest/hamcrest-php": "~1.1",
+                "satooshi/php-coveralls": "dev-master"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.9.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Mockery": "library/"
@@ -356,6 +365,11 @@
                     "name": "Pádraic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
+                },
+                {
+                    "name": "Dave Marshall",
+                    "email": "dave.marshall@atstsolutions.co.uk",
+                    "homepage": "http://davedevelopment.co.uk"
                 }
             ],
             "description": "Mockery is a simple yet flexible PHP mock object framework for use in unit testing with PHPUnit, PHPSpec or any other testing framework. Its core goal is to offer a test double framework with a succint API capable of clearly defining all possible object operations and interactions using a human readable Domain Specific Language (DSL). Designed as a drop in alternative to PHPUnit's phpunit-mock-objects library, Mockery is easy to integrate with PHPUnit and can operate alongside phpunit-mock-objects without the World ending.",
@@ -372,26 +386,26 @@
                 "test double",
                 "testing"
             ],
-            "time": "2013-04-01 12:13:17"
+            "time": "2014-02-05 21:30:08"
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "1.2.13",
+            "version": "1.2.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "466e7cd2554b4e264c9e3f31216d25ac0e5f3d94"
+                "reference": "6ba4ed2895d538a039d5d5866edc4ec0424c7852"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/466e7cd2554b4e264c9e3f31216d25ac0e5f3d94",
-                "reference": "466e7cd2554b4e264c9e3f31216d25ac0e5f3d94",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/6ba4ed2895d538a039d5d5866edc4ec0424c7852",
+                "reference": "6ba4ed2895d538a039d5d5866edc4ec0424c7852",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
                 "phpunit/php-file-iterator": ">=1.3.0@stable",
-                "phpunit/php-text-template": ">=1.1.1@stable",
+                "phpunit/php-text-template": ">=1.2.0@stable",
                 "phpunit/php-token-stream": ">=1.1.3@stable"
             },
             "require-dev": {
@@ -433,7 +447,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2013-09-10 08:14:32"
+            "time": "2014-02-03 07:44:47"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -482,16 +496,16 @@
         },
         {
             "name": "phpunit/php-text-template",
-            "version": "1.1.4",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
-                "url": "git://github.com/sebastianbergmann/php-text-template.git",
-                "reference": "1.1.4"
+                "url": "https://github.com/sebastianbergmann/php-text-template.git",
+                "reference": "206dfefc0ffe9cebf65c413e3d0e809c82fbf00a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sebastianbergmann/php-text-template/zipball/1.1.4",
-                "reference": "1.1.4",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-text-template/zipball/206dfefc0ffe9cebf65c413e3d0e809c82fbf00a",
+                "reference": "206dfefc0ffe9cebf65c413e3d0e809c82fbf00a",
                 "shasum": ""
             },
             "require": {
@@ -522,7 +536,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2012-10-31 11:15:28"
+            "time": "2014-01-30 17:20:04"
         },
         {
             "name": "phpunit/php-timer",
@@ -620,16 +634,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "3.7.28",
+            "version": "3.7.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3b97c8492bcafbabe6b6fbd2ab35f2f04d932a8d"
+                "reference": "d24e9877331039582497052cc3c4d9f465b88210"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3b97c8492bcafbabe6b6fbd2ab35f2f04d932a8d",
-                "reference": "3b97c8492bcafbabe6b6fbd2ab35f2f04d932a8d",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d24e9877331039582497052cc3c4d9f465b88210",
+                "reference": "d24e9877331039582497052cc3c4d9f465b88210",
                 "shasum": ""
             },
             "require": {
@@ -690,7 +704,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2013-10-17 07:27:40"
+            "time": "2014-02-03 07:46:27"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -743,16 +757,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "1.5.1",
+            "version": "1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "bd1e50b8c252c914881dba1dcef089219e430dbd"
+                "reference": "a76a39b317ce8106abe6264daa505e24e1731860"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/bd1e50b8c252c914881dba1dcef089219e430dbd",
-                "reference": "bd1e50b8c252c914881dba1dcef089219e430dbd",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/a76a39b317ce8106abe6264daa505e24e1731860",
+                "reference": "a76a39b317ce8106abe6264daa505e24e1731860",
                 "shasum": ""
             },
             "require": {
@@ -809,21 +823,21 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2013-12-12 03:08:49"
+            "time": "2014-02-04 23:49:58"
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.4.0",
+            "version": "v2.4.2",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "1ae235a1b9d3ad3d9f3860ff20acc072df95b7f5"
+                "reference": "bb6ddaf8956139d1b8c360b4b713ed0138e876b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/1ae235a1b9d3ad3d9f3860ff20acc072df95b7f5",
-                "reference": "1ae235a1b9d3ad3d9f3860ff20acc072df95b7f5",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/bb6ddaf8956139d1b8c360b4b713ed0138e876b3",
+                "reference": "bb6ddaf8956139d1b8c360b4b713ed0138e876b3",
                 "shasum": ""
             },
             "require": {
@@ -847,7 +861,9 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
                 },
                 {
                     "name": "Symfony Community",
@@ -856,7 +872,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2013-11-26 16:40:27"
+            "time": "2014-01-07 13:28:54"
         }
     ],
     "aliases": [
