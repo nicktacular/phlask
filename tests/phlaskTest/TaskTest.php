@@ -16,23 +16,19 @@ class TaskTest extends PHPUnit_Framework_TestCase
 {
     protected static $simpleScriptFixture;
     protected static $phpExec;
-    protected static $fixturesDir;
 
     public static function setUpBeforeClass()
     {
-        $fixtures = $script = dirname(dirname(__FILE__)) . '/fixtures';
-        self::$fixturesDir = $fixtures;
-        self::$simpleScriptFixture = "$fixtures/SimplePhpScript.php";
+        self::$simpleScriptFixture = FIXTURES_DIR . "/SimplePhpScript.php";
 
         self::$phpExec = exec('which php');
     }
 
     public function phpFilesToExecute()
     {
-        $f = dirname(dirname(__FILE__)) . '/fixtures';
         return [
-            ["$f/SimpleFatalError.php", 255],
-            ["$f/SimplePhpScript.php", 200]
+            [FIXTURES_DIR . "/SimpleFatalError.php", 255],
+            [FIXTURES_DIR . "/SimplePhpScript.php", 200]
         ];
     }
 

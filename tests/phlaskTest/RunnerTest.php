@@ -19,14 +19,13 @@ class RunnerTest extends PHPUnit_Framework_TestCase
 {
     private function createFileTasks($num)
     {
-        $fixtureDir = dirname(dirname(__FILE__)) . '/fixtures';
         $queue = new MemoryQueue();
         $tracking = [];
         for ($i = 0; $i < $num; $i++) {
             $tmp = tempnam(sys_get_temp_dir(), __CLASS__);
             $queue->pushTask(ShellRunnable::factory(array(
                 'cmd' => "bash fileWrite.sh $i $tmp $i",
-                'cwd' => $fixtureDir,
+                'cwd' => FIXTURES_DIR,
                 'name' => "task_$i",
             )));
 
@@ -49,7 +48,7 @@ class RunnerTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         if (!class_exists('MemLogger')) {
-            require_once dirname(dirname(__FILE__)) . '/fixtures/MemLogger.php';
+            require_once FIXTURES_DIR . '/MemLogger.php';
         }
     }
 
@@ -141,7 +140,6 @@ class RunnerTest extends PHPUnit_Framework_TestCase
         {
             //see what's in the file
             if (file_get_contents($task['file']) != $task['i']) {
-                var_dump($logger->log);
                 $this->fail("The process run failed. Expected \"{$task['i']}\" in the file {$task['file']}.");
             } else {
                 unlink($task['file']);

@@ -17,8 +17,7 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $fixtures = $script = dirname(dirname(dirname(__FILE__))) . '/fixtures';
-        self::$simpleScriptFixture = "$fixtures/SimplePhpScript.php";
+        self::$simpleScriptFixture = FIXTURES_DIR . '/SimplePhpScript.php';
 
         self::$phpExec = exec('which php');
     }
