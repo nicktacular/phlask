@@ -221,7 +221,7 @@ class RunnerTest extends PHPUnit_Framework_TestCase
         //ensure that the task was signalled correctly
         foreach ($logger->log as $entry) {
             if (preg_match('/^Task .+ signaled with (?<sig>[0-9]+)/', $entry, $matches)) {
-                $this->assertEquals(Task::SIG_ALRM, $matches['sig']);
+                $this->assertEquals(Task::SIG_TERM, $matches['sig']);
                 $found = true;
             }
         }

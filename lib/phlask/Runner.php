@@ -220,7 +220,7 @@ class Runner
                                 . ' for exceeding max runtime limit of ' . $max
                             );
 
-                            $task->terminate(Task::SIG_ALRM);
+                            $task->terminate(Task::SIG_TERM);
                         }
                     }
                 } else {
