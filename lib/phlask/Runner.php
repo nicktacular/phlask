@@ -33,13 +33,6 @@ class Runner
     protected $daemonMode = true;
 
     /**
-     * Verbose logging.
-     *
-     * @var boolean
-     */
-    protected $verbose = false;
-
-    /**
      * How many µs to wait between sampling the running processes.
      *
      * @var int
@@ -101,13 +94,6 @@ class Runner
             );
         }
 
-        //verbosity level
-        if (!isset($config['verbose'])) {
-            $config['verbose'] = false;
-        } else {
-            $config['verbose'] = (bool) $config['verbose'];
-        }
-
         if (isset($config['logger']) && $config['logger'] instanceof LoggerInterface) {
             $logger = $config['logger'];
         } else {
@@ -127,7 +113,6 @@ class Runner
             $config['tasks'],
             $config['daemon'],
             $config['wait'],
-            $config['verbose'],
             $config['max_processes'],
             $logger,
             $store
@@ -145,7 +130,6 @@ class Runner
      *                                         to run and act on items in the queue when
      *                                         they appear (eventually).
      * @param int                $wait         The number of µs to wait to sample a process.
-     * @param bool               $verbose      Whether to run verbosely.
      * @param int                $maxProcesses Maximum number of concurrently running tasks.
      * @param LoggerInterface    $logger       A logger to output information about what's
      *                                         going on in this world.
@@ -155,7 +139,6 @@ class Runner
         TaskQueueInterface $tasks,
         $daemonMode,
         $wait,
-        $verbose,
         $maxProcesses,
         LoggerInterface $logger,
         SplObjectStorage $taskStore
@@ -163,7 +146,6 @@ class Runner
         $this->tasks        = $tasks;
         $this->daemonMode   = $daemonMode;
         $this->wait         = $wait;
-        $this->verbose      = $verbose;
         $this->logger       = $logger;
         $this->maxProcesses = $maxProcesses;
         $this->runningTasks = $taskStore;
