@@ -33,6 +33,8 @@ class PhpRunnable implements TaskSpecInterface
      * @param array $config A list of configs (optional).
      *
      * @return TaskSpecInterface instance
+     *
+     * @throws Exception\InvalidArgumentException When a required config parameter is invalid (or not passed).
      */
     public static function factory(array $config = [])
     {
