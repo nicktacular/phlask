@@ -1,9 +1,16 @@
 phlask
 ======
 
-A task runner that can be run in a distributed environment, consuming tasks off a queue and running the tasks in parallel on separate processes. None of the processes will affect each other, thereby allowing any task to be run in virtually any language with the ability to continue running tasks even when some (or all tasks) fail.
+A task runner that can be run in a distributed environment, consuming tasks off a queue and running tasks in parallel as separate processes. None of the processes will affect each other, thereby allowing any task to be run in virtually any language with the ability to continue running tasks even when some (or all tasks) fail.
 
-Currently queues are available for [MongoDB](http://mongodb.org) and [RabbitMQ](http://rabbitmq.com). Other queue interfaces are being developed for Redis, Amazon SQS, and MySQL.
+Currently queues are available for [MongoDB](http://mongodb.org) (currently building for [RabbitMQ](http://rabbitmq.com)). Other queue interfaces are planned for Redis, Amazon SQS, and MySQL.
+
+
+### Build status
+
+Master: [![Build Status](https://travis-ci.org/nicktacular/phlask.png?branch=master)](http://travis-ci.org/nicktacular/phlask)
+Develop: [![Build Status](https://travis-ci.org/nicktacular/phlask.png?branch=develop)](http://travis-ci.org/nicktacular/phlask)
+
 
 ## How to use this?
 
@@ -63,5 +70,8 @@ $runner->run();
 
 The `tasks` config points to an instance of the queue. It can be any queue that implements the `phlask\TaskQueueInterface`. In this example we've chosen MongoDB on the localhost. The `wait` config indicates how many milliseconds we should wait for when there are no tasks on the queue. It is recommended to set `max_processes` to prevent too many processes from running in parallel if your task queue fills up with many jobs. The `daemon` flag will let the `Runner` run in daemon mode.
 
+## Contributing
+
+If you'd like to contribute to this project, please issue a pull request. I'd love to see more queue implementations or `TaskSpecInterface` implementations added.
 
 
