@@ -1,6 +1,14 @@
 <?php
 
-require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+$dot = dirname(__FILE__);
+
+if (!file_exists($composer = dirname($dot) . '/vendor/autoload.php')) {
+    die("Composer install necessary. Please run `composer install` first.");
+}
+
+/** @var \Composer\Autoload\ClassLoader $autoloader */
+$autoloader = include $composer;
+$autoloader->add('phlaskTest\\', $dot);
 
 // Where the fixtures at, YO!?
-define('FIXTURES_DIR', dirname(__FILE__) . '/fixtures');
+define('FIXTURES_DIR', $dot . '/fixtures');
