@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "1e5f8c4f23599aae200e24211c42e27b",
+    "hash": "ab9b85d0bbd31c3b0132bb7b9654c2a2",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -882,9 +882,9 @@
     "stability-flags": [
 
     ],
-    "platform": [
-
-    ],
+    "platform": {
+        "php": ">=5.4.0"
+    },
     "platform-dev": [
 
     ]
