@@ -1,5 +1,18 @@
 {
+    "name": "phlask/phlask",
+    "type": "library",
+    "homepage": "http://github.com/nicktacular/phlask",
+    "time": "2014-02-19",
+    "license": "MIT",
+    "version": "v0.1.0-alpha",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/nicktacular/phlask"
+        }
+    ],
     "require": {
+        "php": ">=5.4.0",
         "monolog/monolog": "1.6.*",
         "aws/aws-sdk-php": "2.*"
     },
@@ -11,7 +24,7 @@
     
     "autoload": {
         "psr-0": {
-            "phlask": "lib/"
+            "phlask\\": "lib/"
         }
     }
 }
