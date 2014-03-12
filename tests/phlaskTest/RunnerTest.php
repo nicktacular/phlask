@@ -233,7 +233,7 @@ class RunnerTest extends PHPUnit_Framework_TestCase
         }
 
         if (!isset($found)) {
-            $this->fail('Did not find a termination signal message');
+            $this->fail('Did not find a termination signal message. Log: ' . print_r($logger->log, true));
         }
     }
 }
