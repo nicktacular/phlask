@@ -9,15 +9,18 @@
  */
 
 use phlask\TaskSpec\PhpRunnable;
+use phlask\Task;
 
 class PhpRunnableTest extends PHPUnit_Framework_TestCase
 {
     protected static $simpleScriptFixture;
+    protected static $simpleFailingScriptFixture;
     protected static $phpExec;
 
     public static function setUpBeforeClass()
     {
         self::$simpleScriptFixture = FIXTURES_DIR . '/SimplePhpScript.php';
+        self::$simpleFailingScriptFixture = FIXTURES_DIR . '/SimpleFatalError.php';
 
         self::$phpExec = exec('which php');
     }
@@ -107,5 +110,119 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
         );
         $this->assertTrue($task->isDaemon());
         $this->assertSame(0, $task->getTimeout());
+    }
+
+    public function testRunWithFailure()
+    {
+        $taskSpec = PhpRunnable::factory([
+            'php' => self::$phpExec,
+            'file' => self::$simpleFailingScriptFixture
+        ]);
+
+        $task = Task::factory($taskSpec);
+        $task->run();
+
+        //run for a certain amount of time OR until the task status is complete
+        $timeout = 0.5;//s
+        $start = microtime(true);
+        while (microtime(true) - $start < $timeout) {
+            $task->statusCheck();
+            $status = $task->getStatus();
+            if ($status == Task::STATUS_COMPLETE) {
+                //what was the signal?
+                $this->assertSame(255, $task->getExitCode());
+                $this->assertNull($task->getStopSignal());
+                $this->assertNull($task->getTermSignal());
+                return;
+            }
+        }
+
+        $this->fail("This failure task ran out of time.");
+    }
+
+    public function testRunWithSuccess()
+    {
+        $taskSpec = PhpRunnable::factory([
+            'php' => self::$phpExec,
+            'file' => self::$simpleScriptFixture
+        ]);
+
+        $task = Task::factory($taskSpec);
+        $task->run();
+
+        //run for a certain amount of time OR until the task status is complete
+        $timeout = 0.5;//s
+        $start = microtime(true);
+        while (microtime(true) - $start < $timeout) {
+            $task->statusCheck();
+            $status = $task->getStatus();
+            if ($status == Task::STATUS_COMPLETE) {
+                //what was the signal?
+                $this->assertSame(200, $task->getExitCode());
+                $this->assertNull($task->getStopSignal());
+                $this->assertNull($task->getTermSignal());
+                return;
+            }
+        }
+
+        $this->fail("This failure task ran out of time.");
+    }
+
+    public function testRunWithTermSignal()
+    {
+        $taskSpec = PhpRunnable::factory([
+            'php' => self::$phpExec,
+            'file' => self::$simpleScriptFixture
+        ]);
+
+        $task = Task::factory($taskSpec);
+        $task->run();
+        $task->terminate(Task::SIG_ALRM);
+
+        //run for a certain amount of time OR until the task status is complete
+        $timeout = 0.5;//s
+        $start = microtime(true);
+        while (microtime(true) - $start < $timeout) {
+            $task->statusCheck();
+            $status = $task->getStatus();
+            if ($status == Task::STATUS_COMPLETE) {
+                //what was the signal?
+                $this->assertNull($task->getExitCode());
+                $this->assertNull($task->getStopSignal());
+                $this->assertSame(Task::SIG_ALRM, $task->getTermSignal());
+                return;
+            }
+        }
+
+        $this->fail("This failure task ran out of time.");
+    }
+
+    public function testRunWithStopSignal()
+    {
+        $taskSpec = PhpRunnable::factory([
+            'php' => self::$phpExec,
+            'file' => self::$simpleScriptFixture
+        ]);
+
+        $task = Task::factory($taskSpec);
+        $task->run();
+        $task->terminate(Task::SIG_HUP);
+
+        //run for a certain amount of time OR until the task status is complete
+        $timeout = 0.5;//s
+        $start = microtime(true);
+        while (microtime(true) - $start < $timeout) {
+            $task->statusCheck();
+            $status = $task->getStatus();
+            if ($status == Task::STATUS_COMPLETE) {
+                //what was the signal?
+                $this->assertNull($task->getExitCode());
+                $this->assertNull($task->getStopSignal());
+                $this->assertSame(Task::SIG_HUP, $task->getTermSignal());
+                return;
+            }
+        }
+
+        $this->fail("This failure task ran out of time.");
     }
 }

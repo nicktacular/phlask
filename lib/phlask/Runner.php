@@ -71,7 +71,7 @@ class Runner
      * @throws Exception\InvalidTaskQueueException
      * @throws Exception\InvalidArgumentException
      */
-    public static function factory(array $config = [])
+    public static function factory(array $config = array())
     {
         if (!isset($config['tasks'])) {
             throw new Exception\InvalidArgumentException("No task queue provided in 'tasks' key.");
@@ -167,7 +167,7 @@ class Runner
     {
         while (1) {
             while ($this->tasks->hasTasks() && $this->runningTasks->count() < $this->maxProcesses) {
-                $this->logger->info("Have " . $this->tasks->count() . ' tasks to start');
+                $this->logger->info('Have ' . $this->tasks->count() . ' tasks to start');
 
                 //pop a task, init and run
                 $taskSpec = $this->tasks->popTask();

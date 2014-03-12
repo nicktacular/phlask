@@ -64,7 +64,7 @@ class Task
      *
      * @var array
      */
-    protected $pipes = [];
+    protected $pipes = array();
 
     /**
      * The process resource produced by proc_open() method.
@@ -156,17 +156,17 @@ class Task
         $cwd = $this->taskSpec->getCwd();
 
         //run it!
-        //@todo set up an error handler to manage what might not work next
+        //@todo set up an error handler to manage what might not work in proc_open to prevent errors
         $this->process = proc_open(
             $cmd,
-            [
-                ['pipe', 'r'],//stdin wrt child
-                ['pipe', 'w'],//stdout wrt child
-                ['pipe', 'w'],//stderr wrt child
-            ],
+            array(
+                array('pipe', 'r'),//stdin wrt child
+                array('pipe', 'w'),//stdout wrt child
+                array('pipe', 'w'),//stderr wrt child
+            ),
             $this->pipes,
-            $cwd,//@todo what if this is null?
-            $env//@todo what if this is null or an empty array?
+            $cwd,
+            $env
         );
 
         //do a check on the resource
@@ -251,18 +251,14 @@ class Task
     }
 
     /**
-     * Closes a process.
+     * Sends a signal to close a process. The reason we don't call proc_close() directly here is because
+     * we don't ever want to block on any calls. Terminating has a similar effect but with no blocking.
      *
-     * @return bool True if closed.
+     * @return bool True if signal was sent successfully.
      */
     public function close()
     {
-        //@todo proc_close() blocks on the process AND requires us to carefully
-        //manage the pipes that were opened PRIOR to closing. But termination
-        //is equally effective and doesn't block. This is just a reminder to deal
-        //with this method in some way later. Perhaps we just redirect to
-        //$this->terminate(static::SIG_HALT) or something appropriate.
-        throw new \RuntimeException("We don't do this.");
+        return $this->terminate(self::SIG_TERM);
     }
 
     /**

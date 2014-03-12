@@ -83,7 +83,8 @@ class NullSleeperRunnable implements TaskSpecInterface
      */
     public function getCommand()
     {
-        return "/usr/bin/php -r \"usleep({$this->sleep});\"";
+        $php = exec('which php');
+        return "$php -r \"usleep({$this->sleep});\"";
     }
 
     /**
