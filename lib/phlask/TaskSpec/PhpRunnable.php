@@ -63,10 +63,10 @@ class PhpRunnable implements TaskSpecInterface
             throw new Exception\InvalidArgumentException("The php exec {$config['php']} isn't executable");
         }
 
-        return new self($config['file'], $config['php'], isset($config['args']) ? $config['args'] : []);
+        return new self($config['file'], $config['php'], isset($config['args']) ? $config['args'] : array());
     }
 
-    protected function __construct($file, $php, array $args = [])
+    protected function __construct($file, $php, array $args = array())
     {
         $this->file = $file;
         $this->php  = $php;
@@ -112,7 +112,7 @@ class PhpRunnable implements TaskSpecInterface
      */
     public function getEnv()
     {
-        return [];
+        return array();
     }
 
     /**

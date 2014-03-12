@@ -64,7 +64,7 @@ class Task
      *
      * @var array
      */
-    protected $pipes = [];
+    protected $pipes = array();
 
     /**
      * The process resource produced by proc_open() method.
@@ -159,11 +159,11 @@ class Task
         //@todo set up an error handler to manage what might not work in proc_open to prevent errors
         $this->process = proc_open(
             $cmd,
-            [
-                ['pipe', 'r'],//stdin wrt child
-                ['pipe', 'w'],//stdout wrt child
-                ['pipe', 'w'],//stderr wrt child
-            ],
+            array(
+                array('pipe', 'r'),//stdin wrt child
+                array('pipe', 'w'),//stdout wrt child
+                array('pipe', 'w'),//stderr wrt child
+            ),
             $this->pipes,
             $cwd,
             $env

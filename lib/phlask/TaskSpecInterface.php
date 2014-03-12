@@ -19,7 +19,7 @@ interface TaskSpecInterface
      *
      * @return TaskSpecInterface instance
      */
-    public static function factory(array $config = []);
+    public static function factory(array $config = array());
 
     /**
      * Indicates whether the exit code can be trusted for

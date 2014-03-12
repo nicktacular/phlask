@@ -48,6 +48,8 @@ class ShellRunnable implements TaskSpecInterface
      * @param array $config A list of configs (optional).
      *
      * @return TaskSpecInterface instance
+     *
+     * @throws Exception\InvalidArgumentException When the config is off.
      */
     public static function factory(array $config = [])
     {
@@ -67,10 +69,10 @@ class ShellRunnable implements TaskSpecInterface
             throw new Exception\InvalidArgumentException("No friendly name specified for this command");
         }
 
-        return new self($config['cmd'], $config['cwd'], $config['name'], isset($config['args']) ? $config['args'] : []);
+        return new self($config['cmd'], $config['cwd'], $config['name'], isset($config['args']) ? $config['args'] : array());
     }
 
-    protected function __construct($cmd, $cwd, $name, array $args = [])
+    protected function __construct($cmd, $cwd, $name, array $args = array())
     {
         $this->cmd  = $cmd;
         $this->cwd  = $cwd;
@@ -115,7 +117,7 @@ class ShellRunnable implements TaskSpecInterface
      */
     public function getEnv()
     {
-        return [];
+        return array();
     }
 
     /**

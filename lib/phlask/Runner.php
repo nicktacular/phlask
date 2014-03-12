@@ -71,7 +71,7 @@ class Runner
      * @throws Exception\InvalidTaskQueueException
      * @throws Exception\InvalidArgumentException
      */
-    public static function factory(array $config = [])
+    public static function factory(array $config = array())
     {
         if (!isset($config['tasks'])) {
             throw new Exception\InvalidArgumentException("No task queue provided in 'tasks' key.");

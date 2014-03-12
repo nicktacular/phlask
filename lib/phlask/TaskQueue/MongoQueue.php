@@ -84,14 +84,14 @@ class MongoQueue implements TaskQueueInterface
         //read task data from DB
         $task = $this->col
             ->find()
-            ->sort(['date' => 1])
+            ->sort(array('date' => 1))
             ->limit(1)
             ->getNext();
         $id   = $task['_id'];
         $task = unserialize($task['task']);
 
         //now delete
-        $this->col->remove(['_id' => $id]);
+        $this->col->remove(array('_id' => $id));
 
         return $task;
     }
@@ -104,9 +104,9 @@ class MongoQueue implements TaskQueueInterface
      */
     public function pushTask(TaskSpecInterface $task)
     {
-        $this->col->insert([
+        $this->col->insert(array(
             'date' => new MongoDate,
             'task' => serialize($task)
-        ]);
+        ));
     }
 }
