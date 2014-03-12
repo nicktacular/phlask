@@ -167,7 +167,7 @@ class Runner
     {
         while (1) {
             while ($this->tasks->hasTasks() && $this->runningTasks->count() < $this->maxProcesses) {
-                $this->logger->info("Have " . $this->tasks->count() . ' tasks to start');
+                $this->logger->info('Have ' . $this->tasks->count() . ' tasks to start');
 
                 //pop a task, init and run
                 $taskSpec = $this->tasks->popTask();
