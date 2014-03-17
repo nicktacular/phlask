@@ -145,6 +145,18 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $this->assertNull($task->getExitCode());
     }
 
+    public function testRunnerIdSet()
+    {
+        $task = Task::factory(ShellRunnable::factory([
+            'cmd' => 'ls',
+            'cwd' => '/',
+            'name' => 'dir list'
+        ]), 123);
+
+        $this->assertAttributeSame(123, 'runnerId', $task);
+        $this->assertSame(123, $task->getRunnerId());
+    }
+
     public function tearDown()
     {
         Mockery::close();

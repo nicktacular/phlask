@@ -109,15 +109,23 @@ class Task
     protected $termSignal;
 
     /**
+     * The ID of the runner.
+     *
+     * @var string
+     */
+    protected $runnerId;
+
+    /**
      * Initializes this task with a particular spec.
      *
      * @param TaskSpecInterface $taskSpec The task specification.
+     * @param string $runnerId (optional) The ID of the task runner.
      *
      * @return Task The task.
      */
-    public static function factory(TaskSpecInterface $taskSpec)
+    public static function factory(TaskSpecInterface $taskSpec, $runnerId = null)
     {
-        return new self($taskSpec);
+        return new self($taskSpec, $runnerId);
     }
 
     /**
@@ -125,10 +133,12 @@ class Task
      *
      * @param TaskSpecInterface $taskSpec The task specification to use
      *                                    for this class.
+     * @param string $runnerId (optional) The ID of the task runner.
      */
-    public function __construct(TaskSpecInterface $taskSpec)
+    public function __construct(TaskSpecInterface $taskSpec, $runnerId = null)
     {
         $this->taskSpec = $taskSpec;
+        $this->runnerId = $runnerId;
     }
 
     /**
@@ -355,5 +365,15 @@ class Task
     public function getTaskSpec()
     {
         return $this->taskSpec;
+    }
+
+    /**
+     * Retrieves an identifier to determine which runner is running or responsible for this task.
+     *
+     * @return null|string The ID of the runner or null if not set.
+     */
+    public function getRunnerId()
+    {
+        return $this->runnerId;
     }
 }
