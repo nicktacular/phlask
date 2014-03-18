@@ -29,7 +29,7 @@ class RunnerTest extends PHPUnit_Framework_TestCase
                 'name' => "task_$i",
             )));
 
-            $tracking["task$i"] = ['i' => $i, 'file' => $tmp];
+            $tracking["task$i"] = array('i' => $i, 'file' => $tmp);
         }
 
         return array($queue, $tracking);
