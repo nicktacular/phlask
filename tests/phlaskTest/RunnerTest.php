@@ -52,6 +52,12 @@ class RunnerTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function tearDown()
+    {
+        m::close();
+        parent::tearDown();
+    }
+
     /**
      * @expectedException phlask\Exception\InvalidArgumentException
      * @expectedExceptionMessage No task queue provided in 'tasks' key.
@@ -234,6 +240,34 @@ class RunnerTest extends PHPUnit_Framework_TestCase
 
         if (!isset($found)) {
             $this->fail('Did not find a termination signal message. Log: ' . print_r($logger->log, true));
+        }
+    }
+
+    public function testStatusChecks()
+    {
+        $statusNotifier = m::mock('phlask\StatusNotifierInterface');
+        $status = array();
+        $statusNotifier->shouldReceive('updateStatus')
+            ->andReturnUsing(function($code, $task, $message = null) use (&$status) {
+                $status[] = array($code, $task, $message);
+            })->times(10);
+        $tasks = $this->createNullTasks(10);
+        $runner = Runner::factory(array(
+            'tasks' => $tasks,
+            'wait' => 20,
+            'daemon' => false,
+            'max_processes' => $max = 2,
+            'logger' => $logger = new MemLogger(),
+            'status_notifier' => $statusNotifier
+        ));
+
+        $runner->run();
+
+        foreach ($status as $s) {
+            $this->assertInternalType('string', $s[2]);
+            $this->assertInternalType('int', $s[0]);
+            $this->assertSame(Task::STATUS_COMPLETE, $s[0]);
+            $this->assertInstanceOf('\phlask\Task', $s[1]);
         }
     }
 }
