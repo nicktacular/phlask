@@ -5,6 +5,14 @@
     "time": "2014-02-19",
     "license": "MIT",
     "version": "v0.1.0-alpha",
+    "authors": [
+        {
+            "name": "Nick Ilyin",
+            "email": "nick.ilyin@gmail.com",
+            "homepage": "http://github.com/nicktacular",
+            "role": "Developer"
+        }
+    ],
     "repositories": [
         {
             "type": "vcs",
