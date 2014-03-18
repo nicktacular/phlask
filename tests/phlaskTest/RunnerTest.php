@@ -20,7 +20,7 @@ class RunnerTest extends PHPUnit_Framework_TestCase
     private function createFileTasks($num)
     {
         $queue = new MemoryQueue();
-        $tracking = [];
+        $tracking = array();
         for ($i = 0; $i < $num; $i++) {
             $tmp = tempnam(sys_get_temp_dir(), __CLASS__);
             $queue->pushTask(ShellRunnable::factory(array(
