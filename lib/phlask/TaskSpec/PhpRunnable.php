@@ -45,7 +45,7 @@ class PhpRunnable implements TaskSpecInterface
      *
      * @throws Exception\InvalidArgumentException When a required config parameter is invalid (or not passed).
      */
-    public static function factory(array $config = [])
+    public static function factory(array $config = array())
     {
         if (!isset($config['file'])) {
             throw new Exception\InvalidArgumentException("No php file specified in config");

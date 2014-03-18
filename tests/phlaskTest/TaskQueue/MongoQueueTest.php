@@ -41,11 +41,11 @@ class MongoQueueTest extends PHPUnit_Framework_TestCase
     public function testQueueWithOneItem()
     {
         $queue = new MongoQueue('mongodb://localhost', 'testQueue', 'queueCol');
-        $queue->pushTask(ShellRunnable::factory([
+        $queue->pushTask(ShellRunnable::factory(array(
             'cmd' => 'ls',
             'cwd' => '/',
             'name' => 'dummy listing command'
-        ]));
+        )));
 
         $this->assertSame(1, $queue->count(), 'The queue should have exactly 1 item');
         $this->assertTrue($queue->hasTasks(), 'hasTasks() should return true');
@@ -65,11 +65,11 @@ class MongoQueueTest extends PHPUnit_Framework_TestCase
     {
         $queue = new MongoQueue('mongodb://localhost', 'testQueue', 'queueCol');
         for ($i = 0; $i < 5; $i++) {
-            $queue->pushTask(ShellRunnable::factory([
+            $queue->pushTask(ShellRunnable::factory(array(
                 'cmd' => "echo $i",
                 'cwd' => '/',
                 'name' => "echo $i"
-            ]));
+            )));
         }
 
         $this->assertSame(5, $queue->count(), 'Should contain 5 items');

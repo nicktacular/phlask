@@ -51,7 +51,7 @@ class ShellRunnable implements TaskSpecInterface
      *
      * @throws Exception\InvalidArgumentException When the config is off.
      */
-    public static function factory(array $config = [])
+    public static function factory(array $config = array())
     {
         if (!isset($config['cmd'])) {
             throw new Exception\InvalidArgumentException("No shell command specified in config");

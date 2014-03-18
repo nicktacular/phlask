@@ -18,7 +18,7 @@ class ShellRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testEmptyFactoryFail()
     {
-        $task = ShellRunnable::factory([]);
+        $task = ShellRunnable::factory(array());
     }
 
     /**
@@ -27,10 +27,10 @@ class ShellRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testFactoryFail()
     {
-        $task = ShellRunnable::factory([
+        $task = ShellRunnable::factory(array(
             'cmd' => 'ls',
-            'args' => ['/Volumes']
-        ]);
+            'args' => array('/Volumes')
+        ));
     }
 
     /**
@@ -39,10 +39,10 @@ class ShellRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testFactoryFailPartial()
     {
-        $task = ShellRunnable::factory([
+        $task = ShellRunnable::factory(array(
             'cmd' => 'ls',
             'name' => 'dir listing'
-        ]);
+        ));
     }
 
     /**
@@ -51,11 +51,11 @@ class ShellRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testFactoryFailPartial2()
     {
-        $task = ShellRunnable::factory([
+        $task = ShellRunnable::factory(array(
             'cmd' => 'ls',
             'cwd' => '/junk',
             'name' => 'invalid dir list'
-        ]);
+        ));
     }
 
     /**
@@ -64,10 +64,10 @@ class ShellRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testFactoryFailPartial3()
     {
-        $task = ShellRunnable::factory([
+        $task = ShellRunnable::factory(array(
             'cmd' => 'ls',
             'cwd' => '/junk'
-        ]);
+        ));
     }
 
     /**
@@ -75,14 +75,14 @@ class ShellRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testValidFactory()
     {
-        $task = ShellRunnable::factory([
+        $task = ShellRunnable::factory(array(
             'cmd' => 'ls',
             'cwd' => '/etc',
             'name' => 'listing of /etc'
-        ]);
+        ));
 
         $this->assertTrue($task->trustExitCode());
-        $this->assertSame([], $task->getEnv());
+        $this->assertSame(array(), $task->getEnv());
         $this->assertSame('/etc', $task->getCwd());
         $this->assertSame('listing of /etc', $task->getName());
         $this->assertSame('ls', $task->getCommand());
@@ -95,15 +95,15 @@ class ShellRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testValidFactoryArgs()
     {
-        $task = ShellRunnable::factory([
+        $task = ShellRunnable::factory(array(
             'cmd' => 'ls',
             'cwd' => '/',
             'name' => 'listing of /var',
-            'args' => ['/var']
-        ]);
+            'args' => array('/var')
+        ));
 
         $this->assertTrue($task->trustExitCode());
-        $this->assertSame([], $task->getEnv());
+        $this->assertSame(array(), $task->getEnv());
         $this->assertSame('/', $task->getCwd());
         $this->assertSame('listing of /var', $task->getName());
         $this->assertSame("ls '/var'", $task->getCommand());

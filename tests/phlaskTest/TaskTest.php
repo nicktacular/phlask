@@ -26,18 +26,18 @@ class TaskTest extends PHPUnit_Framework_TestCase
 
     public function phpFilesToExecute()
     {
-        return [
-            [FIXTURES_DIR . "/SimpleFatalError.php", 255],
-            [FIXTURES_DIR . "/SimplePhpScript.php", 200]
-        ];
+        return array(
+            array(FIXTURES_DIR . "/SimpleFatalError.php", 255),
+            array(FIXTURES_DIR . "/SimplePhpScript.php", 200)
+        );
     }
 
     public function shellCommandsToExecute()
     {
-        return [
-            ['sleep 1 && ls', '/', 'list'],
-            ['sleep 1 && echo `pwd`', '/', 'blah']
-        ];
+        return array(
+            array('sleep 1 && ls', '/', 'list'),
+            array('sleep 1 && echo `pwd`', '/', 'blah')
+        );
     }
 
     /**
@@ -46,10 +46,10 @@ class TaskTest extends PHPUnit_Framework_TestCase
      */
     public function testSimpleRun($file, $exitCodeExpect)
     {
-        $task = Task::factory(PhpRunnable::factory([
+        $task = Task::factory(PhpRunnable::factory(array(
             'file' => $file,
             'php' => self::$phpExec
-        ]));
+        )));
 
         $task->run();
         $validPid = $task->getPid() > 0;
@@ -84,10 +84,10 @@ class TaskTest extends PHPUnit_Framework_TestCase
      */
     public function testSimpleTermination($file, $exitCodeExpect)
     {
-        $task = Task::factory(PhpRunnable::factory([
+        $task = Task::factory(PhpRunnable::factory(array(
             'file' => $file,
             'php' => self::$phpExec
-        ]));
+        )));
 
         $task->run();
         $task->terminate();
@@ -117,11 +117,11 @@ class TaskTest extends PHPUnit_Framework_TestCase
      */
     public function testCustomTermination($cmd, $cwd, $name)
     {
-        $task = Task::factory(ShellRunnable::factory([
+        $task = Task::factory(ShellRunnable::factory(array(
             'cmd' => $cmd,
             'cwd' => $cwd,
             'name' => $name
-        ]));
+        )));
 
         $task->run();
         $task->terminate(Task::SIG_ABRT);
@@ -143,6 +143,18 @@ class TaskTest extends PHPUnit_Framework_TestCase
         $this->assertSame(Task::STATUS_SIGNALED, $task->getStatus(), "The status should be Task::STATUS_SIGNALED");
         $this->assertSame(Task::SIG_ABRT, $task->getTermSignal(), 'The signal should have been Task::SIG_ABRT');
         $this->assertNull($task->getExitCode());
+    }
+
+    public function testRunnerIdSet()
+    {
+        $task = Task::factory(ShellRunnable::factory(array(
+            'cmd' => 'ls',
+            'cwd' => '/',
+            'name' => 'dir list'
+        )), 123);
+
+        $this->assertAttributeSame(123, 'runnerId', $task);
+        $this->assertSame(123, $task->getRunnerId());
     }
 
     public function tearDown()

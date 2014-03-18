@@ -40,7 +40,7 @@ class NullSleeperRunnable implements TaskSpecInterface
      *
      * @return TaskSpecInterface instance
      */
-    public static function factory(array $config = [])
+    public static function factory(array $config = array())
     {
         //just need to know how long to sleep
         if (!isset($config['sleep'])) {
@@ -95,7 +95,7 @@ class NullSleeperRunnable implements TaskSpecInterface
      */
     public function getEnv()
     {
-        return [];
+        return array();
     }
 
     /**

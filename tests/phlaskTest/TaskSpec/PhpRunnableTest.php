@@ -31,7 +31,7 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testEmptyFactoryFail()
     {
-        $task = PhpRunnable::factory([]);
+        $task = PhpRunnable::factory(array());
     }
 
     /**
@@ -40,10 +40,10 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testFactoryFail()
     {
-        $task = PhpRunnable::factory([
+        $task = PhpRunnable::factory(array(
             'php' => 'php',
             'file' => 'blah'
-        ]);
+        ));
     }
 
     /**
@@ -52,10 +52,10 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testFactoryFailPartial()
     {
-        $task = PhpRunnable::factory([
+        $task = PhpRunnable::factory(array(
             'php' => 'junk',
             'file' => self::$simpleScriptFixture
-        ]);
+        ));
     }
 
     /**
@@ -64,9 +64,9 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testFactoryFailPartial2()
     {
-        $task = PhpRunnable::factory([
+        $task = PhpRunnable::factory(array(
             'file' => self::$simpleScriptFixture
-        ]);
+        ));
     }
 
     /**
@@ -74,13 +74,13 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testValidFactory()
     {
-        $task = PhpRunnable::factory([
+        $task = PhpRunnable::factory(array(
             'php' => self::$phpExec,
             'file' => self::$simpleScriptFixture
-        ]);
+        ));
 
         $this->assertTrue($task->trustExitCode());
-        $this->assertSame([], $task->getEnv());
+        $this->assertSame(array(), $task->getEnv());
         $this->assertSame(dirname(self::$simpleScriptFixture), $task->getCwd());
         $this->assertSame(basename(self::$simpleScriptFixture, '.php'), $task->getName());
         $this->assertSame(self::$phpExec . ' -f ' . escapeshellarg(self::$simpleScriptFixture), $task->getCommand());
@@ -93,14 +93,14 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
      */
     public function testValidFactoryArgs()
     {
-        $task = PhpRunnable::factory([
+        $task = PhpRunnable::factory(array(
             'php' => self::$phpExec,
             'file' => self::$simpleScriptFixture,
-            'args' => ['a','2','z']
-        ]);
+            'args' => array('a','2','z')
+        ));
 
         $this->assertTrue($task->trustExitCode());
-        $this->assertSame([], $task->getEnv());
+        $this->assertSame(array(), $task->getEnv());
         $this->assertSame(dirname(self::$simpleScriptFixture), $task->getCwd());
         $this->assertSame(basename(self::$simpleScriptFixture, '.php'), $task->getName());
         $this->assertSame(
@@ -114,10 +114,10 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
 
     public function testRunWithFailure()
     {
-        $taskSpec = PhpRunnable::factory([
+        $taskSpec = PhpRunnable::factory(array(
             'php' => self::$phpExec,
             'file' => self::$simpleFailingScriptFixture
-        ]);
+        ));
 
         $task = Task::factory($taskSpec);
         $task->run();
@@ -142,10 +142,10 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
 
     public function testRunWithSuccess()
     {
-        $taskSpec = PhpRunnable::factory([
+        $taskSpec = PhpRunnable::factory(array(
             'php' => self::$phpExec,
             'file' => self::$simpleScriptFixture
-        ]);
+        ));
 
         $task = Task::factory($taskSpec);
         $task->run();
@@ -170,10 +170,10 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
 
     public function testRunWithTermSignal()
     {
-        $taskSpec = PhpRunnable::factory([
+        $taskSpec = PhpRunnable::factory(array(
             'php' => self::$phpExec,
             'file' => self::$simpleScriptFixture
-        ]);
+        ));
 
         $task = Task::factory($taskSpec);
         $task->run();
@@ -199,10 +199,10 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
 
     public function testRunWithStopSignal()
     {
-        $taskSpec = PhpRunnable::factory([
+        $taskSpec = PhpRunnable::factory(array(
             'php' => self::$phpExec,
             'file' => self::$simpleScriptFixture
-        ]);
+        ));
 
         $task = Task::factory($taskSpec);
         $task->run();

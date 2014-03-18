@@ -20,7 +20,7 @@ class RunnerTest extends PHPUnit_Framework_TestCase
     private function createFileTasks($num)
     {
         $queue = new MemoryQueue();
-        $tracking = [];
+        $tracking = array();
         for ($i = 0; $i < $num; $i++) {
             $tmp = tempnam(sys_get_temp_dir(), __CLASS__);
             $queue->pushTask(ShellRunnable::factory(array(
@@ -29,7 +29,7 @@ class RunnerTest extends PHPUnit_Framework_TestCase
                 'name' => "task_$i",
             )));
 
-            $tracking["task$i"] = ['i' => $i, 'file' => $tmp];
+            $tracking["task$i"] = array('i' => $i, 'file' => $tmp);
         }
 
         return array($queue, $tracking);
@@ -50,6 +50,12 @@ class RunnerTest extends PHPUnit_Framework_TestCase
         if (!class_exists('MemLogger')) {
             require_once FIXTURES_DIR . '/MemLogger.php';
         }
+    }
+
+    public function tearDown()
+    {
+        m::close();
+        parent::tearDown();
     }
 
     /**
@@ -234,6 +240,34 @@ class RunnerTest extends PHPUnit_Framework_TestCase
 
         if (!isset($found)) {
             $this->fail('Did not find a termination signal message. Log: ' . print_r($logger->log, true));
+        }
+    }
+
+    public function testStatusChecks()
+    {
+        $statusNotifier = m::mock('phlask\StatusNotifierInterface');
+        $status = array();
+        $statusNotifier->shouldReceive('updateStatus')
+            ->andReturnUsing(function($code, $task, $message = null) use (&$status) {
+                $status[] = array($code, $task, $message);
+            })->times(10);
+        $tasks = $this->createNullTasks(10);
+        $runner = Runner::factory(array(
+            'tasks' => $tasks,
+            'wait' => 20,
+            'daemon' => false,
+            'max_processes' => $max = 2,
+            'logger' => $logger = new MemLogger(),
+            'status_notifier' => $statusNotifier
+        ));
+
+        $runner->run();
+
+        foreach ($status as $s) {
+            $this->assertInternalType('string', $s[2]);
+            $this->assertInternalType('int', $s[0]);
+            $this->assertSame(Task::STATUS_COMPLETE, $s[0]);
+            $this->assertInstanceOf('\phlask\Task', $s[1]);
         }
     }
 }

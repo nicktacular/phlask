@@ -2,9 +2,18 @@
     "name": "phlask/phlask",
     "type": "library",
     "homepage": "http://github.com/nicktacular/phlask",
-    "time": "2014-02-19",
+    "time": "2014-03-17 20:50:00",
     "license": "MIT",
-    "version": "v0.1.0-alpha",
+    "version": "v0.1.2-alpha",
+    "description": "PHP parallel task management.",
+    "authors": [
+        {
+            "name": "Nick Ilyin",
+            "email": "nick.ilyin@gmail.com",
+            "homepage": "http://github.com/nicktacular",
+            "role": "Developer"
+        }
+    ],
     "repositories": [
         {
             "type": "vcs",

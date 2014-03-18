@@ -12,4 +12,4 @@ notifications:
   email: false
 
 install:
-  - composer install
+  - composer install --prefer-source

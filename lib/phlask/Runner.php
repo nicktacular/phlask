@@ -10,6 +10,7 @@
 
 namespace phlask;
 
+use phlask\StatusNotifier\NullNotifier;
 use SplObjectStorage;
 use Psr\Log\NullLogger;
 use Psr\Log\LoggerInterface;
@@ -60,6 +61,20 @@ class Runner
      * @var int
      */
     protected $maxProcesses = 10;
+
+    /**
+     * A unique identifier for this runner so that we can keep track all runners.
+     *
+     * @var string
+     */
+    protected $id;
+
+    /**
+     * A status notifier for status updates on tasks.
+     *
+     * @var StatusNotifierInterface
+     */
+    protected $statusNotifier;
 
     /**
      * Creation of a runner instance.
@@ -114,6 +129,19 @@ class Runner
             $store = new SplObjectStorage;
         }
 
+        if (isset($config['status_notifier'])) {
+            if ($config['status_notifier'] instanceof StatusNotifierInterface) {
+                $statusNotifier = $config['status_notifier'];
+            } else {
+                throw new Exception\InvalidStatusNotifierException(
+                    "The tasks class you provided (" . get_class($config['status_notifier'])
+                    . ") does not implement " . __NAMESPACE__ . "\\StatusNotifierInterface."
+                );
+            }
+        } else {
+            $statusNotifier = new NullNotifier;
+        }
+
         //php configs
         set_time_limit(0);
 
@@ -123,7 +151,8 @@ class Runner
             $config['wait'],
             $config['max_processes'],
             $logger,
-            $store
+            $store,
+            $statusNotifier
         );
     }
 
@@ -142,6 +171,7 @@ class Runner
      * @param LoggerInterface    $logger       A logger to output information about what's
      *                                         going on in this world.
      * @param SplObjectStorage   $taskStore    A means for storing running tasks.
+     * @param StatusNotifierInterface $statusNotifier An interface for status notifications.
      */
     public function __construct(
         TaskQueueInterface $tasks,
@@ -149,7 +179,8 @@ class Runner
         $wait,
         $maxProcesses,
         LoggerInterface $logger,
-        SplObjectStorage $taskStore
+        SplObjectStorage $taskStore,
+        StatusNotifierInterface $statusNotifier
     ) {
         $this->tasks        = $tasks;
         $this->daemonMode   = $daemonMode;
@@ -157,6 +188,10 @@ class Runner
         $this->logger       = $logger;
         $this->maxProcesses = $maxProcesses;
         $this->runningTasks = $taskStore;
+        $this->statusNotifier = $statusNotifier;
+
+        //generate a unique id to identify this task runner
+        $this->id = sha1(uniqid('', true) . microtime(true) . mt_rand());
     }
 
     /**
@@ -171,7 +206,7 @@ class Runner
 
                 //pop a task, init and run
                 $taskSpec = $this->tasks->popTask();
-                $task = Task::factory($taskSpec);
+                $task = Task::factory($taskSpec, $this->id);
                 $this->runningTasks->attach($task);
 
                 try {
@@ -244,6 +279,8 @@ class Runner
 
                     //only remove if not pending termination
                     if ($status != Task::STATUS_PENDING_TERMINATION) {
+                        //also, update the status of this job
+                        $this->statusNotifier->updateStatus($status, $task, $msg);
                         $this->runningTasks->detach($task);
                     }
                 }
