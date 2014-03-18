@@ -159,18 +159,18 @@ class Runner
     /**
      * Creates a runnable instance.
      *
-     * @param TaskQueueInterface $tasks        The queue that will be used to extract
-     *                                         and run tasks for this instance.
-     * @param bool               $daemonMode   If set to true, the instance will continue
-     *                                         to wait even after there are no tasks in the
-     *                                         queue, thereby allowing a perpetual process
-     *                                         to run and act on items in the queue when
-     *                                         they appear (eventually).
-     * @param int                $wait         The number of µs to wait to sample a process.
-     * @param int                $maxProcesses Maximum number of concurrently running tasks.
-     * @param LoggerInterface    $logger       A logger to output information about what's
-     *                                         going on in this world.
-     * @param SplObjectStorage   $taskStore    A means for storing running tasks.
+     * @param TaskQueueInterface      $tasks          The queue that will be used to extract
+     *                                                and run tasks for this instance.
+     * @param bool                    $daemonMode     If set to true, the instance will continue
+     *                                                to wait even after there are no tasks in the
+     *                                                queue, thereby allowing a perpetual process
+     *                                                to run and act on items in the queue when
+     *                                                they appear (eventually).
+     * @param int                     $wait           The number of µs to wait to sample a process.
+     * @param int                     $maxProcesses   Maximum number of concurrently running tasks.
+     * @param LoggerInterface         $logger         A logger to output information about what's
+     *                                                going on in this world.
+     * @param SplObjectStorage        $taskStore      A means for storing running tasks.
      * @param StatusNotifierInterface $statusNotifier An interface for status notifications.
      */
     public function __construct(

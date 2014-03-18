@@ -119,7 +119,7 @@ class Task
      * Initializes this task with a particular spec.
      *
      * @param TaskSpecInterface $taskSpec The task specification.
-     * @param string $runnerId (optional) The ID of the task runner.
+     * @param string            $runnerId (optional) The ID of the task runner.
      *
      * @return Task The task.
      */
@@ -133,7 +133,7 @@ class Task
      *
      * @param TaskSpecInterface $taskSpec The task specification to use
      *                                    for this class.
-     * @param string $runnerId (optional) The ID of the task runner.
+     * @param string            $runnerId (optional) The ID of the task runner.
      */
     public function __construct(TaskSpecInterface $taskSpec, $runnerId = null)
     {

@@ -8,7 +8,6 @@
  * @link     http://github.com/nicktacular/phlask
  */
 
-
 namespace phlask\TaskQueue;
 
 use phlask\TaskQueueInterface;

@@ -8,7 +8,6 @@
  * @link     http://github.com/nicktacular/phlask
  */
 
-
 namespace phlask\TaskSpec;
 use phlask\Exception;
 use phlask\TaskSpecInterface;

@@ -8,7 +8,6 @@
  * @link     http://github.com/nicktacular/phlask
  */
 
-
 namespace phlask\StatusNotifier;
 
 use phlask\StatusNotifierInterface;
@@ -28,8 +27,8 @@ class NullNotifier implements StatusNotifierInterface
     /**
      * Updates the status of a task with an optional message.
      *
-     * @param int $status One of the Task::STATUS_* constants.
-     * @param Task $task The task that is used to update the status.
+     * @param int    $status  One of the Task::STATUS_* constants.
+     * @param Task   $task    The task that is used to update the status.
      * @param string $message An optional message to provide with this status update.
      *
      * @return bool True if the status was updated successfully.
