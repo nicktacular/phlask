@@ -25,7 +25,7 @@ $runner = \phlask\Runner::factory(array(
 $runner->run();
 ```
 
-In the simplest case, a `\phlask\Runner` instance is created that will read tasks from a MongoDB queue and run them until all the tasks have run and exit. Alternatively, the application can be run as a daemon in the background by setting `daemon` config as `false` in the factory. The `Runner` is made to run in the background in this manner, consuming tasks as soon as they are made available on the queue.
+In the simplest case, a `\phlask\Runner` instance is created that will read tasks from a MongoDB queue and run them until all the tasks have run and exit. Alternatively, the application can be run as a daemon in the background by setting `daemon` config as `true` in the factory. The `Runner` is made to run in the background in this manner, consuming tasks as soon as they are made available on the queue. Keep in mind that the `daemon` flag is meant to indicate that this process could run in the background (i.e. without any timeouts by PHP) but the actual task of writing a daemon is up to the developer using this library. For more information, read about [creating daemons](daemon.md).
 
 ## Creating jobs
 
