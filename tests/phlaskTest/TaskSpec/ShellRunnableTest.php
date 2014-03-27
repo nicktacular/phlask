@@ -90,6 +90,30 @@ class ShellRunnableTest extends PHPUnit_Framework_TestCase
         $this->assertSame(0, $task->getTimeout());
     }
 
+    public function testIdSet()
+    {
+        $task = ShellRunnable::factory(array(
+            'cmd' => 'ls',
+            'cwd' => '/etc',
+            'name' => 'listing of /etc',
+            'id' => $id = 'hello'
+        ));
+
+        $this->assertSame($id, $task->getId());
+    }
+
+    public function testAssignedId()
+    {
+        $task = ShellRunnable::factory(array(
+            'cmd' => 'ls',
+            'cwd' => '/etc',
+            'name' => 'listing of /etc',
+        ));
+
+        $this->assertInternalType('string', $task->getId());
+    }
+
+
     /**
      * @cover ShellRunnable::factory, ShellRunnable::trustExitCode, ShellRunnable::getEnv, ShellRunnable::getCwd, ShellRunnable::getName
      */

@@ -22,6 +22,13 @@ interface TaskSpecInterface
     public static function factory(array $config = array());
 
     /**
+     * An identifier for use with linking up status updated with existing task specs.
+     *
+     * @return mixed
+     */
+    public function getId();
+
+    /**
      * Indicates whether the exit code can be trusted for
      * raising error levels after execution completes.
      *

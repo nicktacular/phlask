@@ -34,6 +34,13 @@ class NullSleeperRunnable implements TaskSpecInterface
     protected $timeout;
 
     /**
+     * An identifier for this task.
+     *
+     * @var string
+     */
+    protected $id;
+
+    /**
      * All new specs should created by means of a factory.
      *
      * @param array $config A list of configs (optional).
@@ -55,14 +62,28 @@ class NullSleeperRunnable implements TaskSpecInterface
             $config['timeout'] = 0;
         }
 
-        return new static($config['sleep'], $config['daemon'], $config['timeout']);
+        //generate an id to use
+        $id = isset($config['id']) ? $config['id'] : uniqid();
+
+        return new static($config['sleep'], $config['daemon'], $config['timeout'], $id);
     }
 
-    protected function __construct($sleep, $daemon, $timeout)
+    protected function __construct($sleep, $daemon, $timeout, $id)
     {
         $this->sleep    = $sleep;
         $this->daemon   = $daemon;
         $this->timeout  = $timeout;
+        $this->id       = $id;
+    }
+
+    /**
+     * Retrieves the ID for this task.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

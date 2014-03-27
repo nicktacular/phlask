@@ -36,6 +36,13 @@ class PhpRunnable implements TaskSpecInterface
     protected $args;
 
     /**
+     * An identifier for this task.
+     *
+     * @var string
+     */
+    protected $id;
+
+    /**
      * All new specs should created by means of a factory.
      *
      * @param array $config A list of configs (optional).
@@ -62,14 +69,28 @@ class PhpRunnable implements TaskSpecInterface
             throw new Exception\InvalidArgumentException("The php exec {$config['php']} isn't executable");
         }
 
-        return new self($config['file'], $config['php'], isset($config['args']) ? $config['args'] : array());
+        //generate an id to use
+        $id = isset($config['id']) ? $config['id'] : uniqid();
+
+        return new self($config['file'], $config['php'], isset($config['args']) ? $config['args'] : array(), $id);
     }
 
-    protected function __construct($file, $php, array $args = array())
+    protected function __construct($file, $php, array $args = array(), $id)
     {
         $this->file = $file;
         $this->php  = $php;
         $this->args = $args;
+        $this->id   = $id;
+    }
+
+    /**
+     * Retrieves the ID for this task.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

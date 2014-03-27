@@ -43,6 +43,13 @@ class ShellRunnable implements TaskSpecInterface
     protected $name;
 
     /**
+     * An identifier for this task.
+     *
+     * @var string
+     */
+    protected $id;
+
+    /**
      * All new specs should created by means of a factory.
      *
      * @param array $config A list of configs (optional).
@@ -69,15 +76,35 @@ class ShellRunnable implements TaskSpecInterface
             throw new Exception\InvalidArgumentException("No friendly name specified for this command");
         }
 
-        return new self($config['cmd'], $config['cwd'], $config['name'], isset($config['args']) ? $config['args'] : array());
+        //generate an id to use
+        $id = isset($config['id']) ? $config['id'] : uniqid();
+
+        return new self(
+            $config['cmd'],
+            $config['cwd'],
+            $config['name'],
+            isset($config['args']) ? $config['args'] : array(),
+            $id
+        );
     }
 
-    protected function __construct($cmd, $cwd, $name, array $args = array())
+    protected function __construct($cmd, $cwd, $name, array $args = array(), $id)
     {
         $this->cmd  = $cmd;
         $this->cwd  = $cwd;
         $this->name = $name;
         $this->args = $args;
+        $this->id   = $id;
+    }
+
+    /**
+     * Retrieves the ID for this task.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

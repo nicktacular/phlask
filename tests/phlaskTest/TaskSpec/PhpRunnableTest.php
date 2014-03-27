@@ -88,6 +88,27 @@ class PhpRunnableTest extends PHPUnit_Framework_TestCase
         $this->assertSame(0, $task->getTimeout());
     }
 
+    public function testIdSet()
+    {
+        $task = PhpRunnable::factory(array(
+            'php' => self::$phpExec,
+            'file' => self::$simpleScriptFixture,
+            'id' => $id = 'hello'
+        ));
+
+        $this->assertSame($id, $task->getId());
+    }
+
+    public function testAssignedId()
+    {
+        $task = PhpRunnable::factory(array(
+            'php' => self::$phpExec,
+            'file' => self::$simpleScriptFixture
+        ));
+
+        $this->assertInternalType('string', $task->getId());
+    }
+
     /**
      * @cover PhpRunnable::factory, PhpRunnable::trustExitCode, PhpRunnable::getEnv, PhpRunnable::getCwd, PhpRunnable::getName
      */
