@@ -41,12 +41,4 @@ interface TaskQueueInterface
      * @return TaskSpecInterface|null The next task or null if none.
      */
     public function popTask();
-
-    /**
-     * Add a task to the queue.
-     *
-     * @param  TaskSpecInterface $task The task to add.
-     * @return null
-     */
-    public function pushTask(TaskSpecInterface $task);
 }
