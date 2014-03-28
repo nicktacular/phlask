@@ -26,7 +26,8 @@ class MongoQueueTest extends PHPUnit_Framework_TestCase
 
         //check that the necessary extension is loaded
         if (!class_exists('MongoClient')) {
-            self::$skip .= 'Requires MongoClient >=1.4. ';
+            self::$skip = 'Requires MongoClient >=1.4.';
+            return;
         }
 
         //also make sure that there's a local mongo available
@@ -34,7 +35,7 @@ class MongoQueueTest extends PHPUnit_Framework_TestCase
             $test = new MongoClient(self::$mongoDb);
             $test->connect();
         } catch (MongoCursorException $e) {
-            self::$skip .= 'Requires a MongoDB instance to test on:' . self::$mongoDb . ' ';
+            self::$skip = 'Requires a MongoDB instance to test on:' . self::$mongoDb;
         }
     }
 
