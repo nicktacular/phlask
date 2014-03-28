@@ -10,7 +10,6 @@
 
 namespace phlask\TaskQueue;
 
-use phlask\TaskQueue\Mongo;
 use phlask\TaskQueueInterface;
 use phlask\TaskSpecInterface;
 use MongoClient;
@@ -55,14 +54,14 @@ class MongoQueue implements TaskQueueInterface
     /**
      * The model to use for the tasks.
      *
-     * @var Mongo\TaskModel
+     * @var Mongo\TaskModelInterface
      */
     protected $taskModel;
 
     /**
      * The model to use for locking tasks while they're pulled off of the queue.
      *
-     * @var Mongo\TaskLockModel
+     * @var Mongo\TaskLockModelInterface
      */
     protected $taskLockModel;
 
@@ -74,6 +73,13 @@ class MongoQueue implements TaskQueueInterface
      */
     protected $errorHandler;
 
+    /**
+     * @param string                       $connString    The connection string.
+     * @param string                       $db            The database name.
+     * @param Mongo\TaskModelInterface     $taskModel     The task model.
+     * @param Mongo\TaskLockModelInterface $taskLockModel The task lock model.
+     * @param callable                     $errorHandler  (optional) A callable which should take one parameter (an exception).
+     */
     public function __construct(
         $connString,
         $db,
@@ -175,6 +181,7 @@ class MongoQueue implements TaskQueueInterface
                 $this->taskLockModel->prepareInsert($taskId),
                 array('w' => 1)//write must be acknowledged
             );
+
             return true;
         } catch (MongoCursorException $e) {
             //expected behavior for cursor failing due to existing lock

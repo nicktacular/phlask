@@ -10,7 +10,6 @@
 
 namespace phlask\TaskQueue\Mongo;
 
-
 /**
  * A simple MongoDB based queue: the Task lock model.
  *

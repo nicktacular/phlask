@@ -10,7 +10,6 @@
 
 namespace phlask\TaskQueue\Mongo;
 
-
 use phlask\TaskSpecInterface;
 
 /**
