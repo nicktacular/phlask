@@ -5,7 +5,11 @@
   bootstrap="tests/bootstrap.php"
   convertErrorsToExceptions="true"
   convertNoticesToExceptions="true"
-  convertWarningsToExceptions="true">
+  convertWarningsToExceptions="true"
+  stopOnError="false"
+  stopOnFailure="false"
+  stopOnIncomplete="false"
+  stopOnSkipped="false">
 
   <testsuite name="All tests">
     <directory suffix="Test.php">./tests</directory>
