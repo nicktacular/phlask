@@ -2,9 +2,9 @@
     "name": "phlask/phlask",
     "type": "library",
     "homepage": "http://github.com/nicktacular/phlask",
-    "time": "2014-03-27 22:26:15",
+    "time": "2014-03-31 19:04:40",
     "license": "MIT",
-    "version": "0.2.1-alpha",
+    "version": "0.2.2",
     "description": "PHP parallel task management.",
     "authors": [
         {

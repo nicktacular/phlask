@@ -1,5 +1,8 @@
 # Release notes
 
+## Version 0.2.2-alpha
+ - Improved the `MongoQueue` adapter with ability to specify the actual model in the interfaces found in `phlask\TaskQueue\Mongo` namespace.
+
 ## Version 0.2.1-alpha
 This is an API breaking release.
 
