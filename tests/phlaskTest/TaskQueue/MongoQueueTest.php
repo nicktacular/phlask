@@ -67,6 +67,10 @@ class MongoQueueTest extends PHPUnit_Framework_TestCase
 
     private function cleanup()
     {
+        if (!class_exists('MongoClient')) {
+            return;
+        }
+
         $conn = new MongoClient(self::$mongoDb);
         $db = $conn->selectDB(self::$db);
 
