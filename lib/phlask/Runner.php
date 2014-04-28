@@ -182,13 +182,13 @@ class Runner
         SplObjectStorage $taskStore,
         StatusNotifierInterface $statusNotifier
     ) {
-        $this->tasks        = $tasks;
-        $this->daemonMode   = $daemonMode;
-        $this->wait         = $wait;
-        $this->logger       = $logger;
-        $this->maxProcesses = $maxProcesses;
-        $this->runningTasks = $taskStore;
-        $this->statusNotifier = $statusNotifier;
+        $this->tasks            = $tasks;
+        $this->daemonMode       = $daemonMode;
+        $this->wait             = $wait;
+        $this->logger           = $logger;
+        $this->maxProcesses     = $maxProcesses;
+        $this->runningTasks     = $taskStore;
+        $this->statusNotifier   = $statusNotifier;
 
         //generate a unique id to identify this task runner
         $this->id = sha1(uniqid('', true) . microtime(true) . mt_rand());
