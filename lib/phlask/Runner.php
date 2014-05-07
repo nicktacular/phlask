@@ -8,6 +8,8 @@
  * @link     http://github.com/nicktacular/phlask
  */
 
+declare(ticks = 1);
+
 namespace phlask;
 
 use phlask\StatusNotifier\NullNotifier;
@@ -75,6 +77,13 @@ class Runner
      * @var StatusNotifierInterface
      */
     protected $statusNotifier;
+
+    /**
+     * Switch is flipped on when a termination signal has been sent.
+     *
+     * @var bool
+     */
+    protected $terminationInProgress = false;
 
     /**
      * Creation of a runner instance.
@@ -200,8 +209,15 @@ class Runner
      */
     public function run()
     {
+        //register signal handler
+        $this->registerSignalHandler();
+
         while (1) {
-            while ($this->tasks->hasTasks() && $this->runningTasks->count() < $this->maxProcesses) {
+            while (
+                !$this->terminationInProgress &&
+                $this->tasks->hasTasks() &&
+                $this->runningTasks->count() < $this->maxProcesses
+            ) {
                 $this->logger->info('Have ' . $this->tasks->count() . ' tasks to start');
 
                 //pop a task, init and run
@@ -224,66 +240,23 @@ class Runner
 
             //sleep so we poll later
             usleep($this->wait);
+            //echo "After sleep, termination: " . ($this->terminationInProgress?' TRUE ':' false ') . "\n";
+            //echo "  - count of running: " . $this->runningTasks->count() . "\n";
+            $this->logger->debug("After sleep, termination: " . ($this->terminationInProgress?' TRUE ':' false '));
+            $this->logger->debug("  - count of running: " . $this->runningTasks->count());
 
             //log message of running tasks
             $this->logger->info("Currently running tasks: " . $this->runningTasks->count());
 
-            //check the status of the running tasks
+            //check the status of each running task
             foreach ($this->runningTasks as $task) {
                 /** @var Task $task */
-                $task->statusCheck();
-                $status = $task->getStatus();
+                $this->checkStatus($task);
+            }
 
-                if ($status == Task::STATUS_RUNNING) {
-                    //if it's not a daemon process, terminate if overtime
-                    if (!$task->isDaemon() && $task->getTaskSpec()->getTimeout()) {
-                        $max = $task->getTaskSpec()->getTimeout();
-                        $run = $task->getRuntime();
-                        if ($run > $max) {
-                            $this->logger->warning(
-                                'Terminating task ' . $task->getTaskSpec()->getName()
-                                . ' for exceeding max runtime limit of ' . $max
-                            );
-
-                            $task->terminate(Task::SIG_TERM);
-                        }
-                    }
-                } else {
-                    //terminated or complete
-                    $code   = $task->getExitCode();
-                    $pid    = $task->getPid();
-                    $name   = $task->getTaskSpec()->getName();
-                    $ssig   = $task->getStopSignal();
-                    $tsig   = $task->getTermSignal();
-
-                    switch ($status) {
-                        case Task::STATUS_SIGNALED:
-                            $msg = sprintf('Task %s (%d) signaled with %d, (exit: %d)', $name, $pid, $tsig, $code);
-                            break;
-                        case Task::STATUS_STOPPED:
-                            $msg = sprintf('Task %s (%d) stopped with %d, (exit: %d)', $name, $pid, $ssig, $code);
-                            break;
-                        case Task::STATUS_COMPLETE:
-                            $msg = sprintf('Task %s (%d) complete with exit code %d', $name, $pid, $code);
-                            break;
-                        case Task::STATUS_PENDING_TERMINATION:
-                            $msg = sprintf('Task %s (%d) pending termination.', $name, $pid);
-                            break;
-                        default:
-                            $msg = sprintf('Task %s (%d) status unknown with exit code %d', $name, $pid, $code);
-                            break;
-                    }
-
-                    //log the status
-                    $this->logger->info($msg);
-
-                    //only remove if not pending termination
-                    if ($status != Task::STATUS_PENDING_TERMINATION) {
-                        //also, update the status of this job
-                        $this->statusNotifier->updateStatus($status, $task, $msg);
-                        $this->runningTasks->detach($task);
-                    }
-                }
+            //break if termination in effect and no more tasks running
+            if ($this->terminationInProgress && !$this->runningTasks->count()) {
+                break;
             }
 
             //only continue if in daemon mode, or there are more tasks to run
@@ -291,5 +264,88 @@ class Runner
                 break;
             }
         }
+    }
+
+    protected function checkStatus(Task $task)
+    {
+        $task->statusCheck();
+        $status = $task->getStatus();
+
+        if ($status == Task::STATUS_RUNNING) {
+            //check if we are currently trying to terminate all tasks
+            if ($this->terminationInProgress) {
+                $task->terminate(Task::SIG_TERM);
+            } elseif (!$task->isDaemon() && $task->getTaskSpec()->getTimeout()) {
+                //if it's not a daemon process, terminate if overtime
+                $max = $task->getTaskSpec()->getTimeout();
+                $run = $task->getRuntime();
+                if ($run > $max) {
+                    $this->logger->warning(
+                        'Terminating task ' . $task->getTaskSpec()->getName()
+                        . ' for exceeding max runtime limit of ' . $max
+                    );
+
+                    $task->terminate(Task::SIG_TERM);
+                }
+            }
+        } else {
+            //terminated or complete
+            $code   = $task->getExitCode();
+            $pid    = $task->getPid();
+            $name   = $task->getTaskSpec()->getName();
+            $ssig   = $task->getStopSignal();
+            $tsig   = $task->getTermSignal();
+            $kill   = $this->terminationInProgress ? ' ** TERMINATING DAEMON **' : '';
+
+            switch ($status) {
+                case Task::STATUS_SIGNALED:
+                    $msg = sprintf('Task %s (%d) signaled with %d, (exit: %d)%s', $name, $pid, $tsig, $code, $kill);
+                    break;
+                case Task::STATUS_STOPPED:
+                    $msg = sprintf('Task %s (%d) stopped with %d, (exit: %d)%s', $name, $pid, $ssig, $code, $kill);
+                    break;
+                case Task::STATUS_COMPLETE:
+                    $msg = sprintf('Task %s (%d) complete (exit: %d)%s', $name, $pid, $code, $kill);
+                    break;
+                case Task::STATUS_PENDING_TERMINATION:
+                    $msg = sprintf('Task %s (%d) pending termination.%s', $name, $pid, $kill);
+                    break;
+                default:
+                    $msg = sprintf('Task %s (%d) status unknown with exit code %d.%s', $name, $pid, $code, $kill);
+                    break;
+            }
+
+            //log the status
+            $this->logger->info($msg);
+
+            //only remove if not pending termination
+            if ($status != Task::STATUS_PENDING_TERMINATION) {
+                //also, update the status of this job
+                $this->statusNotifier->updateStatus($status, $task, $msg);
+                $this->runningTasks->detach($task);
+            }
+        }
+    }
+
+    /**
+     * Should be used to register a signal handler to deal with signals that may be sent to this process for shutting
+     * down or aborting.
+     *
+     * @param int $signal One of the POSIX signals, like SIGTERM.
+     */
+    public function signalHandler($signal)
+    {
+        if ($signal == SIGTERM) {
+            $this->terminationInProgress = true;
+        }
+    }
+
+    /**
+     * Registers $this->signalHandler() as the signal handler.
+     */
+    public function registerSignalHandler()
+    {
+        pcntl_signal(SIGTERM, array($this, 'signalHandler'));
+        pcntl_signal(SIGINT, array($this, 'signalHandler'));
     }
 }
