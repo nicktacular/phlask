@@ -3,7 +3,7 @@
 dest=$1
 sleepFor=$2
 
-echo "Started" > "$dest"
+# echo "Started" > "$dest"
 
 function writeToFile {
     echo "$1" > "$dest"
