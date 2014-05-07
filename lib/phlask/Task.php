@@ -235,6 +235,8 @@ class Task
         } elseif (isset($s['stopped']) && $s['stopped'] === true) {
             $this->status = static::STATUS_STOPPED;
             $this->stopSignal = isset($s['stopsig']) ? $s['stopsig'] : null;
+        } elseif (isset($s['running']) && $s['running'] === false) {
+            $this->status = static::STATUS_COMPLETE;
         }
     }
 
@@ -251,7 +253,7 @@ class Task
         if ($this->status == static::STATUS_RUNNING) {
             proc_terminate($this->process, $signal);
 
-            //change teh status to pending termination
+            //change the status to pending termination
             $this->status = static::STATUS_PENDING_TERMINATION;
 
             return true;
