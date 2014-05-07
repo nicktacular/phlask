@@ -240,10 +240,6 @@ class Runner
 
             //sleep so we poll later
             usleep($this->wait);
-            //echo "After sleep, termination: " . ($this->terminationInProgress?' TRUE ':' false ') . "\n";
-            //echo "  - count of running: " . $this->runningTasks->count() . "\n";
-            $this->logger->debug("After sleep, termination: " . ($this->terminationInProgress?' TRUE ':' false '));
-            $this->logger->debug("  - count of running: " . $this->runningTasks->count());
 
             //log message of running tasks
             $this->logger->info("Currently running tasks: " . $this->runningTasks->count());
