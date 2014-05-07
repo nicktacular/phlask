@@ -35,11 +35,30 @@ class RunnerTest extends PHPUnit_Framework_TestCase
         return array($queue, $tracking);
     }
 
-    private function createNullTasks($num)
+    private function createTrappableScriptTasks($num)
+    {
+        $queue = new MemoryQueue();
+        $tracking = array();
+        for ($i = 0; $i < $num; $i++) {
+            //$tmp = tempnam(sys_get_temp_dir(), __CLASS__);
+            $tmp = sys_get_temp_dir() . '/' . __CLASS__;
+            $queue->pushTask(ShellRunnable::factory(array(
+                'cmd' => "bash trappableScript.sh ${tmp}${i} 30",
+                'cwd' => FIXTURES_DIR,
+                'name' => "task_$i",
+            )));
+
+            $tracking["task$i"] = array('i' => $i, 'file' => $tmp.$i);
+        }
+
+        return array($queue, $tracking);
+    }
+
+    private function createNullTasks($num, $sleep = 1)
     {
         $queue = new MemoryQueue();
         for ($i = 0; $i < $num; $i++) {
-            $queue->pushTask(NullSleeperRunnable::factory(array('sleep' => 1)));
+            $queue->pushTask(NullSleeperRunnable::factory(array('sleep' => $sleep)));
         }
 
         return $queue;
@@ -200,7 +219,7 @@ class RunnerTest extends PHPUnit_Framework_TestCase
         //ensure that the exit codes were as expected
         $found = array();
         foreach ($logger->log as $entry) {
-            if (preg_match('/^Task task_(?<task_id>[0-9]+) \([0-9]+\)[a-zA-Z ]+(?<code>[0-9]+)$/', $entry, $matches)) {
+            if (preg_match('/^Task task_(?<task_id>[0-9]+) \([0-9]+\)[a-zA-Z ]+\(exit: (?<code>[0-9]+)\)$/', $entry, $matches)) {
                 $this->assertEquals($matches['task_id'], $matches['code']);
                 $found[] = $matches['task_id'];
             }
@@ -240,6 +259,76 @@ class RunnerTest extends PHPUnit_Framework_TestCase
 
         if (!isset($found)) {
             $this->fail('Did not find a termination signal message. Log: ' . print_r($logger->log, true));
+        }
+    }
+
+    public function testGlobalTerminationSent()
+    {
+        $queue = $this->createTrappableScriptTasks($numOfTasks = 5);
+        $runner = Runner::factory(array(
+            'tasks' => $queue[0],
+            'wait' => 20,
+            'daemon' => true,
+            'max_processes' => 10,
+            'logger' => $logger = new MemLogger()
+        ));
+
+        if (!function_exists('pcntl_fork')) {
+            $this->markTestSkipped('Need pcntl and posix modules to test global termination');
+            return;
+        }
+
+        $pid = pcntl_fork();
+        if ($pid === -1) {
+            $this->fail('Process forking failed with pcntl_fork.');
+            return;
+        }
+
+        if ($pid) {
+            //parent
+            //issue kill signal after we've given the process a chance to start running the tasks
+            usleep(500000);
+            exec('kill -TERM ' . $pid);
+            if (!pcntl_waitpid($pid, $status)) {
+                $this->fail("Failed to wait for termination with pcntl_waitpid");
+                return;
+            }
+
+            $termSig = pcntl_wtermsig($status);
+            if ($termSig != 0) {
+                $this->fail("Not signalled properly! Expected 0, got " . $termSig);
+                return;
+            }
+
+            //wait until the first file is available or quit
+            $first = reset($queue[1]);
+            $start = microtime(true);
+            $max = 5;//up to 5 seconds
+            while (!file_exists($first['file']) && $start + $max > microtime(true)) {
+                usleep(250000);
+            }
+
+            foreach ($queue[1] as $taskKey => $taskSpec) {
+                if (!file_exists($taskSpec['file'])) {
+                    $this->fail("Expected $taskKey to create {$taskSpec['file']} but that file is absent.");
+                    return;
+                }
+
+                $contents = trim(file_get_contents($taskSpec['file']));
+                $this->assertSame(
+                    'SIGTERM',
+                    $contents,
+                    "Expected $taskKey to create {$taskSpec['file']} with 'SIGTERM'. Actual contents: '$contents'"
+                );
+                unlink($taskSpec['file']);
+            }
+
+        } else {
+            //child
+            ob_start();
+            $runner->run();
+            ob_end_clean();
+            exit(0);
         }
     }
 
