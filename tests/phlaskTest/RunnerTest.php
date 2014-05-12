@@ -273,6 +273,12 @@ class RunnerTest extends PHPUnit_Framework_TestCase
             'logger' => $logger = new MemLogger()
         ));
 
+        //make sure /tmp is writable, or this test cannot succeed
+        if (!is_writable('/tmp')) {
+            $this->markTestSkipped('/tmp is unwritable, so skipping.');
+            return;
+        }
+
         if (!function_exists('pcntl_fork')) {
             $this->markTestSkipped('Need pcntl and posix modules to test global termination');
             return;
