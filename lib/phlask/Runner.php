@@ -205,16 +205,17 @@ class Runner
                 $this->logger->info('Have ' . $this->tasks->count() . ' tasks to start');
 
                 //pop a task, init and run
-                $taskSpec = $this->tasks->popTask();
-                $task = Task::factory($taskSpec, $this->id);
-                $this->runningTasks->attach($task);
+                if ($taskSpec = $this->tasks->popTask()) {
+                    $task = Task::factory($taskSpec, $this->id);
+                    $this->runningTasks->attach($task);
 
-                try {
-                    $task->run();
-                    $this->logger->info('Started ' . $task->getTaskSpec()->getName() . '(' . $task->getPid() . ')');
-                } catch (Exception\ExecutionException $e) {
-                    $this->logger->warning($e->getMessage());
-                    $this->runningTasks->detach($task);
+                    try {
+                        $task->run();
+                        $this->logger->info('Started ' . $task->getTaskSpec()->getName() . '(' . $task->getPid() . ')');
+                    } catch (Exception\ExecutionException $e) {
+                        $this->logger->warning($e->getMessage());
+                        $this->runningTasks->detach($task);
+                    }
                 }
             }
 
