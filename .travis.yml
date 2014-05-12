@@ -7,7 +7,7 @@ php:
 
 script:
   - phpunit --configuration phpunit.xml.dist --coverage-text
-  - ./signaleHandlerRunner.sh
+  - ./signalHandlerRunner.sh
 
 notifications:
   email: false
