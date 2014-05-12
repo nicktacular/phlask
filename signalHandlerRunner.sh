@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Starting signal handler test"
+
 cd tests
 php signalHandlerTest.php &
 
@@ -38,3 +40,6 @@ verify out3 3
 
 rm -f out*
 rm test.pid
+
+echo "Signale handler test complete."
+exit 0
