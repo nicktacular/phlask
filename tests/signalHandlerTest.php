@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 
 use \phlask\TaskSpec\ShellRunnable;
