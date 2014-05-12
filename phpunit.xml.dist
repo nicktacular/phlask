@@ -12,7 +12,7 @@
   stopOnSkipped="false">
 
   <testsuite name="All tests">
-    <directory suffix="Test.php">./tests</directory>
+    <directory suffix="Test.php">./tests/phlaskTest</directory>
   </testsuite>
 
 </phpunit>
