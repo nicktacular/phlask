@@ -310,7 +310,7 @@ class RunnerTest extends PHPUnit_Framework_TestCase
             //wait until the first file is available or quit
             $first = reset($queue[1]);
             $start = microtime(true);
-            $max = 5;//up to 5 seconds
+            $max = 10;//up to 5 seconds
             while (!file_exists($first['file']) && $start + $max > microtime(true)) {
                 usleep(250000);
             }
