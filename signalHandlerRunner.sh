@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd tests
-./signalHandlerTest.php &
+php signalHandlerTest.php &
 
 # wait for it to start
 sleep 1
