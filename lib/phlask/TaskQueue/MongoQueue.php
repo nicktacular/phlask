@@ -155,7 +155,8 @@ class MongoQueue implements TaskQueueInterface
                 }
 
                 //update that we have taken this item off the queue and release the lock
-                $this->col->save($this->taskModel->updateAfterPopped($task));
+                $updatedTask = $this->taskModel->updateAfterPopped($task);
+                $this->col->save($updatedTask);
                 $this->releaseLock($id);
 
                 return $this->taskModel->createTaskFromModel($task);
@@ -177,8 +178,9 @@ class MongoQueue implements TaskQueueInterface
     protected function lock($taskId)
     {
         try {
+            $newLock = $this->taskLockModel->prepareInsert($taskId);
             $this->lock->insert(
-                $this->taskLockModel->prepareInsert($taskId),
+                $newLock,
                 array('w' => 1)//write must be acknowledged
             );
 
